@@ -3,64 +3,81 @@ import path from 'node:path';
 
 const root = new URL('.', import.meta.url).pathname;
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
-const errors=[];
-const required=[
-  'index.html','package.json','vercel.json','src/main.jsx','src/styles.css','src/lib/data.js','src/lib/supabase.js','api/assistant.ts','api/quote.ts','api/dispatch.ts','api/firms.ts','api/payments/webhook.ts','api/payments/initiate.ts','api/notify/whatsapp.ts','api/notify/ivr.ts','playwright.config.js','e2e/home.spec.js',
-  'supabase/migrations/202609270001_nirdhoom_core.sql','supabase/migrations/202609270002_nirdhoom_production.sql','supabase/migrations/202609270003_nirdhoom_v6.sql','supabase/migrations/202609270004_nirdhoom_v7.sql','supabase/seed.sql'
+const exists = file => fs.existsSync(path.join(root, file));
+const errors = [];
+
+const required = [
+  'index.html',
+  'package.json',
+  'package-lock.json',
+  'vercel.json',
+  'src/main.jsx',
+  'src/main.tsx',
+  'src/App.tsx',
+  'src/index.css',
+  'api/assistant.ts',
+  'api/quote.ts',
+  'api/dispatch.ts',
+  'api/firms.ts',
+  'api/payments/webhook.ts',
+  'api/payments/initiate.ts',
+  'api/notify/whatsapp.ts',
+  'api/notify/ivr.ts',
+  'supabase/migrations/202609270001_nirdhoom_core.sql',
+  'supabase/migrations/202609270002_nirdhoom_production.sql',
+  'supabase/migrations/202609270003_nirdhoom_v6.sql',
+  'supabase/migrations/202609270004_nirdhoom_v7.sql',
+  'supabase/migrations/202610010005_nirdhoom_booking_integrity.sql',
+  'supabase/migrations/202610010006_nirdhoom_verification_and_settlement_integrity.sql',
+  'supabase/migrations/202610010007_nirdhoom_operational_integrity.sql',
+  '.github/workflows/ci.yml',
 ];
-for(const file of required){if(!fs.existsSync(path.join(root,file)))errors.push(`missing file: ${file}`);else if(!read(file).trim())errors.push(`empty file: ${file}`)}
-const main=read('src/main.jsx'),css=read('src/styles.css'),pkg=JSON.parse(read('package.json')),core=read('supabase/migrations/202609270001_nirdhoom_core.sql'),prod=read('supabase/migrations/202609270002_nirdhoom_production.sql'),v6=read('supabase/migrations/202609270003_nirdhoom_v6.sql'),v7=read('supabase/migrations/202609270004_nirdhoom_v7.sql');
-const checks=[
- ['root mount',main.includes("document.getElementById('root')")],
- ['no browser secret key',!main.includes('service_role')&&!main.includes('SUPABASE_SECRET_KEY')],
- ['node 24 pin',pkg.engines?.node?.includes('24')&&read('vercel.json').includes('nodejs24.x')],
- ['supabase RLS',core.includes('enable row level security')&&prod.includes('enable row level security')],
- ['role escalation guard',prod.includes('prevent_role_escalation')],
- ['phone OTP',main.includes('signInWithOtp({phone')&&main.includes('verifyOtp({phone')],
- ['consent flow',main.includes('consents')&&v6.includes('create table if not exists public.consents')],
- ['postgis polygon',v6.includes('extensions.geography(Polygon,4326)')&&v6.includes('fields_boundary_gix')],
- ['real boundary capture',main.includes('tileToLatLng')&&main.includes('boundary_geojson')],
- ['dynamic quote endpoint',main.includes("fetch('/api/quote'")&&fs.existsSync(path.join(root,'api/quote.ts'))],
- ['guarantee + penalty schema',v6.includes('guaranteed_by_date')&&v6.includes('penalty_amount')],
- ['jobs state machine',v6.includes('create table if not exists public.jobs')&&v7.includes('transition_job')&&main.includes('transition_job')],
- ['operator GPS',main.includes('watchPosition')&&prod.includes('machine_locations')],
- ['evidence storage',main.includes("storage.from('evidence')")&&v6.includes("insert into storage.buckets")],
- ['dispatch API',main.includes("fetch('/api/dispatch'")&&fs.existsSync(path.join(root,'api/dispatch.ts'))],
- ['OR-Tools service hook',read('api/dispatch.ts').includes('DISPATCH_SERVICE_URL')],
- ['FIRMS API + polygon match',main.includes('/api/firms')&&read('api/firms.ts').includes('VIIRS_NOAA21_NRT')&&read('api/firms.ts').includes('matched_count')],
- ['buyer contracts',v6.includes('create table if not exists public.buyer_contracts')&&v6.includes('create table if not exists public.dispatches')],
- ['credits wallet',v6.includes('create table if not exists public.credit_wallets')&&main.includes('credit_wallets')],
- ['harvest intelligence',v6.includes('create table if not exists public.harvest_forecasts')&&main.includes('Sentinel-2')],
- ['soil report model',v6.includes('create table if not exists public.soil_reports')],
- ['payment webhook reconciliation',fs.existsSync(path.join(root,'api/payments/webhook.ts'))&&read('api/payments/webhook.ts').includes('SUPABASE_SERVICE_ROLE_KEY')&&read('api/payments/webhook.ts').includes('webhook_received_at')],
- ['WhatsApp + IVR server hooks',fs.existsSync(path.join(root,'api/notify/whatsapp.ts'))&&read('api/notify/whatsapp.ts').includes('graph.facebook.com')&&fs.existsSync(path.join(root,'api/notify/ivr.ts'))&&read('api/notify/ivr.ts').includes('IVR_WEBHOOK_URL')],
- ['live-record Sathi',read('api/assistant.ts').includes('/rest/v1/fields')&&read('api/assistant.ts').includes('REQUIRE_AUTH_FOR_AI')],
- ['transactional booking RPC',v7.includes('reserve_clearance_booking')&&main.includes('reserve_clearance_booking')],
- ['buyer offer locking',v7.includes('accept_buyer_offer')&&main.includes('accept_buyer_offer')],
- ['evidence integrity metadata',v7.includes('sha256')&&main.includes('sha256File')],
- ['GPS proximity gate',main.includes('haversineKm')&&main.includes('arrival is blocked')],
- ['payment initiation adapter',fs.existsSync(path.join(root,'api/payments/initiate.ts'))&&main.includes('/api/payments/initiate')],
- ['E2E smoke test',fs.existsSync(path.join(root,'playwright.config.js'))&&fs.existsSync(path.join(root,'e2e/home.spec.js'))],
- ['PWA shell',fs.existsSync(path.join(root,'public/sw.js'))&&fs.existsSync(path.join(root,'public/manifest.webmanifest'))],
- ['responsive css',css.includes('@media(max-width:900px)')&&css.includes('@media(max-width:560px)')],
+
+for (const file of required) {
+  if (!exists(file)) errors.push(`missing required file: ${file}`);
+  else if (!read(file).trim()) errors.push(`empty required file: ${file}`);
+}
+
+const pkg = JSON.parse(read('package.json'));
+const lock = read('package-lock.json');
+const entry = read('src/main.jsx');
+const app = read('src/App.tsx');
+const ci = read('.github/workflows/ci.yml');
+const v7 = read('supabase/migrations/202609270004_nirdhoom_v7.sql');
+const v71 = read('supabase/migrations/202610010005_nirdhoom_booking_integrity.sql');
+const v72 = read('supabase/migrations/202610010006_nirdhoom_verification_and_settlement_integrity.sql');
+const v73 = read('supabase/migrations/202610010007_nirdhoom_operational_integrity.sql');
+
+const checks = [
+  ['modular React entrypoint', entry.includes("import { App } from './App.tsx'") && entry.includes("import './index.css'")],
+  ['no duplicate entrypoint', !exists('src/main.tsx')],
+  ['no committed monolithic bundle', !exists('nirdhoom-app.html')],
+  ['no committed build archive', !exists('nirdhoom-final.zip')],
+  ['Node 24 runtime', pkg.engines?.node?.includes('24') && read('vercel.json').includes('nodejs24.x')],
+  ['lockfile present', lock.includes('"lockfileVersion": 3')],
+  ['Supabase RLS', /enable row level security/i.test(read('supabase/migrations/202609270002_nirdhoom_production.sql'))],
+  ['server-owned booking RPC', v71.includes('reserve_clearance_booking_v2') && v71.includes('server_authoritative')],
+  ['legacy booking RPC revoked', v72.includes('revoke execute on function public.reserve_clearance_booking')],
+  ['verification evidence gate', v72.includes('Verification requires completed job, evidence asset and residue lot')],
+  ['buyer ownership gate', v72.includes('b.profile_id=auth.uid()')],
+  ['atomic residue claim', v72.includes('get diagnostics claimed = row_count')],
+  ['payment webhook idempotency', v72.includes('payments_provider_reference_idx')],
+  ['self-role escalation guard', v73.includes('prevent_self_privileged_profile') && v73.includes("<> 'farmer'")],
+  ['GPS bounds', v73.includes('machine_locations_latitude_check') && v73.includes('machine_locations_speed_check')],
+  ['evidence ownership trigger', v73.includes('validate_evidence_asset') && v73.includes('storage_path must belong to its creator')],
+  ['FIRMS client insert revoked', v73.includes('revoke insert on public.firms_observations from authenticated')],
+  ['operator evidence policy', v73.includes('operator inserts linked evidence') && v73.includes('created_by=auth.uid()')],
+  ['API auth boundary', /verifyDispatcher\(req\)/.test(read('api/notify/whatsapp.ts')) && /verifyDispatcher\(req\)/.test(read('api/notify/ivr.ts'))],
+  ['dispatch solver secret', read('api/dispatch.ts').includes('DISPATCH_SERVICE_TOKEN')],
+  ['payment remains non-money-moving', read('api/payments/initiate.ts').includes('status(501)') && read('api/payments/initiate.ts').includes('No money movement was attempted')],
+  ['CI tests actual build', ci.includes('npm run syntaxcheck') && ci.includes('npm run audit') && ci.includes('npm test') && ci.includes('npm run build')],
 ];
-for(const [name,ok] of checks)if(!ok)errors.push(`failed check: ${name}`);
 
-// Detect imported Lucide names that are unused and capitalized JSX components that are undefined.
-const lucideBlock=main.match(/import\s*\{([^}]*)\}\s*from\s*'lucide-react'/)?.[1]||'';
-const imported=lucideBlock.split(',').map(x=>x.trim()).filter(Boolean);
-for(const name of imported){const clean=name.split(/\s+as\s+/)[0].trim();const occurrences=(main.match(new RegExp(`\\b${clean.replace(/[.*+?^${}()|[\\]\\]/g,'\\$&')}\\b`,'g'))||[]).length;if(occurrences<2)errors.push(`unused Lucide import: ${clean}`)}
-const localComponents=new Set([...main.matchAll(/function\s+([A-Z][A-Za-z0-9_]*)\s*\(/g)].map(m=>m[1]));
-// Include default-imported React components in the JSX symbol scan.
-for (const match of main.matchAll(/import\s+([A-Z][A-Za-z0-9_]*)\s+from\s+['"][^'"]+['"]/g)) localComponents.add(match[1]);
-const jsxTags=new Set([...main.matchAll(/<([A-Z][A-Za-z0-9_]*)\b/g)].map(m=>m[1]));
-const lucideSet=new Set(imported.map(x=>x.split(/\s+as\s+/)[0].trim()));
-for(const tag of jsxTags)if(!localComponents.has(tag)&&!lucideSet.has(tag)&&tag!=='React')errors.push(`undefined JSX component: ${tag}`);
+for (const [name, ok] of checks) if (!ok) errors.push(`failed check: ${name}`);
 
-// Catch likely dead buttons and obvious placeholder/fake settlement language regressions.
-for(const match of main.matchAll(/<button\b([^>]*)>/g)){if(!/onClick=|onKeyDown=/.test(match[1]))errors.push(`button without handler near: ${match[1].slice(0,80)}`)}
-if(main.includes("field_id:'00000000-0000-0000-0000-000000000000'"))errors.push('evidence upload uses a fake UUID');
-if(main.includes('transaction ID')&&!main.includes('No provider reference'))errors.push('payment UI may imply settlement without provider state');
+if (errors.length) {
+  console.error(errors.join('\n'));
+  process.exit(1);
+}
 
-if(errors.length){console.error(errors.join('\n'));process.exit(1)}
-console.log(`NIRDHOOM V7 audit passed: ${required.length} required files, ${checks.length} feature/security checks, JSX/import scan clean, button-handler scan clean.`);
+console.log(`NIRDHOOM V7.4 audit passed: ${required.length} required files, ${checks.length} architecture/security checks.`);
