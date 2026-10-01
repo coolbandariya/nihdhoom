@@ -12,7 +12,6 @@ const required = [
   'package-lock.json',
   'vercel.json',
   'src/main.jsx',
-  'src/main.tsx',
   'src/App.tsx',
   'src/index.css',
   'api/assistant.ts',
