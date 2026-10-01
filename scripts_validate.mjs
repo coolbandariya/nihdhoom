@@ -63,7 +63,7 @@ const checks = [
   ['payment webhook idempotency', v72.includes('payments_provider_reference_idx')],
   ['self-role escalation guard', v73.includes('prevent_self_privileged_profile') && v73.includes("<> 'farmer'")],
   ['GPS bounds', v73.includes('machine_locations_latitude_check') && v73.includes('machine_locations_speed_check')],
-  ['evidence ownership trigger', v73.includes('validate_evidence_asset') && v73.includes('storage_path must belong to its creator')],
+  ['evidence ownership trigger', v73.includes('validate_evidence_asset') && v73.includes('Evidence storage path must belong to its creator')],
   ['FIRMS client insert revoked', v73.includes('revoke insert on public.firms_observations from authenticated')],
   ['operator evidence policy', v73.includes('operator inserts linked evidence') && v73.includes('created_by=auth.uid()')],
   ['API auth boundary', /verifyDispatcher\(req\)/.test(read('api/notify/whatsapp.ts')) && /verifyDispatcher\(req\)/.test(read('api/notify/ivr.ts'))],
