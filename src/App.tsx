@@ -22,6 +22,9 @@ import { AgenticCommandCenter } from './components/AgenticConsole/AgenticCommand
 import { AgenticTelemetryToast } from './components/AgenticConsole/AgenticTelemetryToast';
 import { ParticleField } from './components/Effects/ParticleField';
 import { AgenticLanding } from './components/Landing/AgenticLanding';
+import { CommandCenter } from './components/CommandCenter/CommandCenter';
+import { ResiduePooling } from './components/ResiduePooling/ResiduePooling';
+import { ImpactResearch } from './components/ImpactResearch/ImpactResearch';
 
 
 import { INITIAL_STORAGE_YARDS, INITIAL_BUYERS } from './data/mockData';
@@ -78,18 +81,26 @@ export function App() {
 
       {/* Main Content Area */}
       <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-4 py-4 relative z-10">
-        {/* TAB: AGENTIC AI MASTER OVERVIEW & STRATEGIC BENTO HUB */}
+        {/* PRIMARY PRODUCT SURFACE: RESIDUE-FIRST COMMAND CENTER */}
         {activeTab === 'OVERVIEW' && (
-          <AgenticLanding
-            onNavigateTab={(tab) => setActiveTab(tab)}
-            openPitchDrawer={() => setIsPitchDrawerOpen(true)}
-            acresScheduled={acresScheduled}
-            totalPayoutInr={totalPayoutInr}
-            co2Avoided={0}
-            firmsZeroBurnCount={verifiedCount}
-            activeMachines={machines.length}
-            fireEventsOutsideCount={fireEvents.length}
+          <CommandCenter
+            fields={fields}
+            machines={machines}
+            fireEvents={fireEvents}
+            storageYards={demoMode ? INITIAL_STORAGE_YARDS : []}
+            buyers={demoMode ? INITIAL_BUYERS : []}
+            onSelectField={handleSelectField}
+            onOpenResidue={() => setActiveTab('RESIDUE_POOLS')}
+            onOpenImpact={() => setActiveTab('IMPACT_RESEARCH')}
           />
+        )}
+
+        {activeTab === 'RESIDUE_POOLS' && (
+          <ResiduePooling fields={fields} demoMode={demoMode} />
+        )}
+
+        {activeTab === 'IMPACT_RESEARCH' && (
+          <ImpactResearch fields={fields} demoMode={demoMode} />
         )}
 
         {/* TAB 0: AGENTIC AI MULTI-AGENT SWARM */}
@@ -284,8 +295,8 @@ export function App() {
                   fields={fields}
                   machines={machines}
                   fireEvents={fireEvents}
-                  storageYards={INITIAL_STORAGE_YARDS}
-                  buyers={INITIAL_BUYERS}
+                  storageYards={demoMode ? INITIAL_STORAGE_YARDS : []}
+                  buyers={demoMode ? INITIAL_BUYERS : []}
                   selectedField={selectedField}
                   onSelectField={handleSelectField}
                   activeRoutePolyline={activeRoutePolyline}
