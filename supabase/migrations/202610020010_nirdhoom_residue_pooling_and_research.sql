@@ -188,3 +188,8 @@ end;
 $$;
 
 grant execute on function public.create_residue_pool(text,numeric,date,uuid) to authenticated;
+
+revoke all on function public.join_residue_pool(uuid,numeric) from public;
+grant execute on function public.join_residue_pool(uuid,numeric) to authenticated;
+revoke all on function public.create_residue_pool(text,numeric,date,uuid) from public;
+grant execute on function public.create_residue_pool(text,numeric,date,uuid) to authenticated;
