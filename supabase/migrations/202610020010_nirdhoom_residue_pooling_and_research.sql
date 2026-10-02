@@ -141,3 +141,50 @@ drop policy if exists "read active methodologies" on public.impact_methodologies
 create policy "read active methodologies" on public.impact_methodologies for select to authenticated using (
   active=true or exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role in ('verifier','admin'))
 );
+
+
+create or replace function public.create_residue_pool(
+  p_name text,
+  p_target_tonnes numeric,
+  p_pickup_deadline date,
+  p_buyer_demand_id uuid default null
+)
+returns public.residue_pools
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  actor uuid := (select auth.uid());
+  role_name text;
+  row_out public.residue_pools%rowtype;
+begin
+  if actor is null then raise exception 'authentication required'; end if;
+  if p_target_tonnes <= 0 then raise exception 'target quantity must be positive'; end if;
+
+  select role into role_name from public.profiles where id=actor;
+  if role_name not in ('buyer','dispatcher','admin') then
+    raise exception 'only buyers or operations roles can create pools';
+  end if;
+
+  if p_buyer_demand_id is not null and not exists (
+    select 1 from public.buyer_demands d
+    where d.id=p_buyer_demand_id
+      and d.status='OPEN'
+      and (
+        d.buyer_id=actor
+        or role_name in ('dispatcher','admin')
+      )
+  ) then
+    raise exception 'buyer demand is not available to this user';
+  end if;
+
+  insert into public.residue_pools(name,buyer_demand_id,target_tonnes,pickup_deadline,created_by)
+  values(p_name,p_buyer_demand_id,p_target_tonnes,p_pickup_deadline,actor)
+  returning * into row_out;
+
+  return row_out;
+end;
+$$;
+
+grant execute on function public.create_residue_pool(text,numeric,date,uuid) to authenticated;
