@@ -21,7 +21,6 @@ import { FarmerOnboarding } from './components/FarmerOnboarding/FarmerOnboarding
 import { AgenticCommandCenter } from './components/AgenticConsole/AgenticCommandCenter';
 import { AgenticTelemetryToast } from './components/AgenticConsole/AgenticTelemetryToast';
 import { ParticleField } from './components/Effects/ParticleField';
-import { AgenticLanding } from './components/Landing/AgenticLanding';
 import { CommandCenter } from './components/CommandCenter/CommandCenter';
 import { ResiduePooling } from './components/ResiduePooling/ResiduePooling';
 import { ImpactResearch } from './components/ImpactResearch/ImpactResearch';
