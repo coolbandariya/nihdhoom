@@ -12,13 +12,17 @@ import {
   Globe,
   Leaf,
   UserCheck,
-  Bot
+  Bot,
+  Layers3,
+  BarChart3
 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 
 
 export type ActiveTab = 
   | 'OVERVIEW'
+  | 'RESIDUE_POOLS'
+  | 'IMPACT_RESEARCH'
   | 'AGENTIC_CONSOLE'
   | 'DEMO_RUNNER'
   | 'DIGITAL_TWIN_3D'
@@ -122,6 +126,26 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
             <span>Overview</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('RESIDUE_POOLS')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+              activeTab === 'RESIDUE_POOLS' ? 'bg-amber-600 text-white shadow-md shadow-amber-500/30' : 'text-amber-300 hover:text-amber-200 hover:bg-slate-900'
+            }`}
+          >
+            <Layers3 className="w-3.5 h-3.5" />
+            <span>Residue Pools</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('IMPACT_RESEARCH')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+              activeTab === 'IMPACT_RESEARCH' ? 'bg-cyan-600 text-white shadow-md shadow-cyan-500/30' : 'text-cyan-300 hover:text-cyan-200 hover:bg-slate-900'
+            }`}
+          >
+            <BarChart3 className="w-3.5 h-3.5" />
+            <span>Impact & Research</span>
           </button>
 
           {/* Agentic AI Swarm Console Tab */}
