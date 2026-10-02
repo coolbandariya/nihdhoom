@@ -40,6 +40,18 @@ export function ResiduePooling({ fields, demoMode }: Props) {
     setNotice('Demo pool created. Live mode uses the Supabase pooling workflow.');
   }
 
+  async function createPoolFromDemand(demand: Demand) {
+    if (demoMode || !supabase) { setNotice('Demo mode: buyer-demand pool creation is simulated.'); return; }
+    const { data, error } = await (supabase as any).rpc('create_residue_pool', {
+      p_name: `${demand.buyer_name} · ${demand.target_tonnes}t procurement pool`,
+      p_target_tonnes: demand.target_tonnes,
+      p_pickup_deadline: demand.pickup_deadline,
+      p_buyer_demand_id: demand.id,
+    });
+    setNotice(error ? error.message : `Pool ${data?.id || ''} created from buyer demand.`);
+    if (!error) await load();
+  }
+
   async function joinPool(poolId: string, tonnes: number) {
     if (demoMode || !supabase) { setNotice('Demo mode: pool membership simulated locally.'); return; }
     const { error } = await (supabase as any).rpc('join_residue_pool', { p_pool_id: poolId, p_quantity_tonnes: tonnes });
@@ -80,6 +92,7 @@ export function ResiduePooling({ fields, demoMode }: Props) {
               <div key={d.id} className="rounded-lg border border-slate-800 p-3">
                 <div className="flex justify-between"><span className="text-xs font-bold text-white">{d.buyer_name}</span><span className="text-xs text-amber-300">{d.target_tonnes} t</span></div>
                 <div className="mt-1 text-[10px] text-slate-500">Pickup by {d.pickup_deadline} · radius {d.radius_km} km</div>
+                <button onClick={() => void createPoolFromDemand(d)} className="mt-2 inline-flex items-center gap-1 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-[10px] font-bold text-amber-200"><ArrowRight className="h-3 w-3" /> Create pool</button>
               </div>
             ))}
           </div>
