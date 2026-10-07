@@ -127,9 +127,9 @@ export function HindiTextConverter() {
             <RotateCcw className="h-3.5 w-3.5" /> Swap
           </button>
         </div>
-        <div className="relative min-h-28 rounded-2xl border border-emerald-200/70 bg-emerald-50/70 p-3 dark:border-emerald-900/60 dark:bg-emerald-950/30">
-          <div className="min-h-[5.5rem] whitespace-pre-wrap text-sm leading-6 text-emerald-950 dark:text-emerald-100">
-            {output || <span className="text-emerald-700/50 dark:text-emerald-300/50">Converted text appears here…</span>}
+        <div className="relative min-h-28 rounded-2xl border border-emerald-300 bg-[#F0FDF4] p-3 shadow-sm">
+          <div className="min-h-[5.5rem] whitespace-pre-wrap break-words font-sans text-sm font-semibold leading-6 text-[#0F172A]">
+            {output || <span className="text-slate-500">Converted text appears here…</span>}
           </div>
           {output && (
             <button type="button" onClick={copyOutput} className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-lg bg-white/80 text-emerald-800 hover:bg-white dark:bg-slate-900/70 dark:text-emerald-300" aria-label="Copy converted text">
