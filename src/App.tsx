@@ -289,10 +289,8 @@ export function App() {
   useEffect(() => {
     const demoOnlyTabs: ActiveTab[] = [
       'AGENTIC_CONSOLE',
-      'DEMO_RUNNER',
       'DIGITAL_TWIN_3D',
       'MACHINERY_3D',
-      'FARMER_SURFACE',
       'OFFTAKE_AUCTION',
       'CARBON_MARKET',
       'JUDGE_DEFENSE',
