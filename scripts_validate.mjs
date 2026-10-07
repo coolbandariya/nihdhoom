@@ -108,6 +108,11 @@ const v78 = read('supabase/migrations/202610020011_nirdhoom_residue_pooling_secu
 const v79 = read('supabase/migrations/202610020012_nirdhoom_residue_pool_verification_gate.sql');
 const v80 = read('supabase/migrations/202610040001_machine_privacy_and_pool_member_visibility.sql');
 const v81 = read('supabase/migrations/202610040002_revoke_trigger_function_execute.sql');
+const v82 = read('supabase/migrations/202610050001_nirdhoom_telegram_identity.sql');
+const v83 = read('supabase/migrations/202610050002_nirdhoom_telegram_webhook_idempotency.sql');
+const v84 = read('supabase/migrations/202610050003_nirdhoom_telegram_identity_live_repair.sql');
+const v85 = read('supabase/migrations/20261006_nirdhoom_integrity_hardening.sql');
+const v86 = read('supabase/migrations/20261006_nirdhoom_residue_quantity_invariants.sql');
 const telegramWebhook = read('api/notify/telegram-webhook.ts');
 const telegramDedupe = read('supabase/migrations/202610050002_nirdhoom_telegram_webhook_idempotency.sql');
 const controller = read('src/state/useAppController.ts');
@@ -141,6 +146,8 @@ const checks = [
   ['residue pooling execution restricted', v78.includes('revoke execute on function public.join_residue_pool') && v78.includes('revoke execute on function public.create_residue_pool')],
   ['machine privacy policy', v80.includes('create policy "authorized reads machines"') && v80.includes("operator_user_id=(select auth.uid())") && v80.includes("f.owner_id=(select auth.uid())")],
   ['trigger-only execute revoked', v81.includes('revoke all on function public.prevent_role_escalation()') && v81.includes('revoke all on function public.refresh_field_geometry_metrics()') && v81.includes('revoke all on function public.sync_field_boundary()')],
+  ['telegram identity repair chain', v82.includes('telegram_identities') && v83.includes('telegram_webhook_updates') && v84.includes('telegram_identities')],
+  ['integrity hardening chain', v85.includes("set search_path = ''") && v85.includes('commitment exceeds pool remaining capacity') && v86.includes('residue_pool_members')],
   ['pool member privacy policy', v80.includes('create policy "authorized read pool members"') && v80.includes("farmer_id=(select auth.uid())")],
   ['pool requires verified residue', v79.includes("l.status in ('VERIFIED','VERIFIED_NON_BURN')") && v79.includes('status=case when current_tonnes+p_quantity_tonnes >= target_tonnes then \'MATCHED\'')],
   ['demo payment disclosure', read('src/components/FieldOperator/UpiSettlementModal.tsx').includes('no money movement')],
