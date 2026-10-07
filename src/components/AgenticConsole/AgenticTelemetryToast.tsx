@@ -85,13 +85,13 @@ export const AgenticTelemetryToast: React.FC<{
   if (!isVisible) return null;
 
   return (
-    <aside aria-label="Real-time Telemetry Stream" className="nirdhoom-telemetry fixed bottom-5 right-5 z-40 max-w-sm w-full px-3 sm:px-0">
-      <div className="telemetry-card glass-panel p-3.5 rounded-2xl border shadow-xl backdrop-blur-xl">
+    <aside aria-label="Real-time Operations activity" className="nirdhoom-telemetry fixed bottom-5 right-5 z-40 max-w-sm w-full px-3 sm:px-0">
+      <div className="telemetry-card overflow-hidden rounded-2xl border bg-white shadow-[0_18px_50px_rgba(24,55,42,.14)]">
         <div className="flex items-center justify-between pb-2 border-b border-white/5 mb-2.5">
           <div className="flex items-center gap-2">
             <span className="badge--dot" />
             <span className="text-[11px] font-mono uppercase tracking-wider font-bold telemetry-kicker">
-              Telemetry Stream
+              Operations activity
             </span>
             <span className="text-[10px] font-mono telemetry-muted">
               {demoMode ? `(${currentIndex + 1}/${STREAM_EVENTS.length})` : '(live)'}
@@ -108,7 +108,7 @@ export const AgenticTelemetryToast: React.FC<{
             </button>
             <button
               onClick={() => setIsVisible(false)}
-              className="p-1 hover:text-white rounded hover:bg-slate-800 transition-all cursor-pointer"
+              className="telemetry-icon-button rounded-lg p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
               title="Dismiss"
             >
               <X className="w-3.5 h-3.5" />
@@ -119,7 +119,7 @@ export const AgenticTelemetryToast: React.FC<{
         {!isMinimized && (
           <div className="flex flex-col gap-2">
             <div className="flex items-start gap-2.5">
-              <div className="telemetry-event-icon w-9 h-9 rounded-xl border flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div className="telemetry-event-icon grid h-10 w-10 shrink-0 place-items-center rounded-xl border">
                 {currentEvent.icon === 'satellite' && <Satellite className="w-4 h-4 text-emerald-400" />}
                 {currentEvent.icon === 'vrp' && <Radio className="w-4 h-4 text-cyan-400 animate-pulse" />}
                 {currentEvent.icon === 'auction' && <TrendingUp className="w-4 h-4 text-emerald-400" />}
@@ -127,14 +127,14 @@ export const AgenticTelemetryToast: React.FC<{
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-1 mb-0.5">
-                  <span className="text-xs font-bold truncate telemetry-title">
+                  <span className="text-sm font-extrabold leading-tight telemetry-title">
                     {currentEvent.title}
                   </span>
                   <span className="text-[10px] font-mono flex-shrink-0 telemetry-muted">
                     {currentEvent.time}
                   </span>
                 </div>
-                <p className="text-[11px] leading-snug line-clamp-2 telemetry-detail">
+                <p className="mt-1 text-[11px] leading-relaxed telemetry-detail">
                   {currentEvent.detail}
                 </p>
               </div>
@@ -149,7 +149,7 @@ export const AgenticTelemetryToast: React.FC<{
                   onClick={() => onNavigateTab?.(currentEvent.targetTab!)}
                   className="telemetry-inspect text-[11px] font-mono font-semibold cursor-pointer flex items-center gap-1"
                 >
-                  <span>Inspect Layer &rarr;</span>
+                  <span>Inspect workspace →</span>
                 </button>
               </div>
             )}
