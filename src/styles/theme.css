@@ -2408,3 +2408,285 @@ html[data-theme="kisan"] .nirdhoom-field-app :where(.image-card:hover img,.photo
     scroll-behavior: auto !important;
   }
 }
+
+
+/* =========================================================
+   FINAL PRODUCT POLISH — airy layouts, stronger hierarchy
+   ========================================================= */
+html[data-theme="kisan"] .nirdhoom-field-app {
+  --page-max: 1180px;
+  --surface: #ffffff;
+  --surface-soft: #f4f7f1;
+  --surface-warm: #fbf6ea;
+  --ink: #173522;
+  --ink-soft: #536658;
+  --line-clean: #dfe7dc;
+  --green: #276b43;
+  --green-dark: #1e5736;
+  --gold: #b87920;
+}
+
+/* Stop the old dense dashboard feeling. */
+html[data-theme="kisan"] .nirdhoom-field-app :is(.farmer-surface,.field-page) {
+  color: var(--ink);
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is(.farmer-surface,.field-page) > * + * {
+  margin-top: 1.15rem;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is(.farmer-surface,.field-page) section {
+  border-radius: 22px;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is(.farmer-surface,.field-page) .grid {
+  gap: 1rem;
+}
+
+/* Brief / research-gap block: fewer tiny boxes, much more breathing room. */
+html[data-theme="kisan"] .home-gap-story {
+  margin-top: 2.5rem;
+  padding: clamp(1.35rem, 3vw, 2.2rem);
+  border-radius: 28px;
+  border: 1px solid #dfe7dc;
+  background: linear-gradient(145deg,#ffffff 0%,#f7faf4 68%,#fbf4e4 100%);
+  box-shadow: 0 18px 48px rgba(37,75,44,.07);
+}
+html[data-theme="kisan"] .home-gap-heading {
+  grid-template-columns: minmax(0,1.25fr) minmax(300px,.75fr);
+  gap: 2rem;
+  align-items: start;
+}
+html[data-theme="kisan"] .home-gap-heading h2 {
+  margin-top: .35rem;
+  max-width: 760px;
+  font-size: clamp(1.65rem,3.2vw,2.45rem);
+  line-height: 1.08;
+  letter-spacing: -.035em;
+}
+html[data-theme="kisan"] .home-gap-heading p {
+  max-width: 48ch;
+  font-size: .92rem;
+  line-height: 1.75;
+  color: #5a6b5d;
+}
+html[data-theme="kisan"] .home-gap-grid {
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: .9rem;
+  margin-top: 1.5rem;
+}
+html[data-theme="kisan"] .home-gap-grid article {
+  min-height: 150px;
+  padding: 1.15rem;
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid #e1e8de;
+}
+html[data-theme="kisan"] .home-gap-grid strong {
+  font-size: clamp(1.8rem,3vw,2.45rem);
+  color: #a86612;
+}
+html[data-theme="kisan"] .home-gap-grid span {
+  margin-top: .6rem;
+  font-size: .88rem;
+  line-height: 1.55;
+}
+html[data-theme="kisan"] .home-gap-grid small {
+  margin-top: .7rem;
+  font-size: .68rem;
+  line-height: 1.45;
+}
+html[data-theme="kisan"] .home-gap-answer {
+  gap: .9rem;
+  margin-top: 1.25rem;
+  padding-top: 1.1rem;
+}
+html[data-theme="kisan"] .home-gap-answer div {
+  flex: 1 1 360px;
+  padding-right: 1rem;
+}
+html[data-theme="kisan"] .home-gap-answer b { font-size: .86rem; }
+html[data-theme="kisan"] .home-gap-answer span { font-size: .76rem; line-height: 1.5; }
+html[data-theme="kisan"] .home-gap-answer a {
+  min-height: 42px;
+  padding: .65rem .85rem;
+  border-radius: 12px;
+  font-size: .72rem;
+  background: #fffaf0;
+}
+
+/* Booking / Book Parali Pickup: make the workflow feel like a polished consumer product. */
+html[data-theme="kisan"] .farmer-booking {
+  max-width: 1080px !important;
+  padding: .25rem 0 2rem;
+}
+html[data-theme="kisan"] .farmer-booking > section:first-child {
+  padding: clamp(1.35rem,3vw,2rem) !important;
+  border: 1px solid #dfe7dc !important;
+  background: linear-gradient(135deg,#ffffff 0%,#f7faf5 72%,#fbf3df 100%) !important;
+  box-shadow: 0 18px 48px rgba(35,76,44,.07) !important;
+}
+html[data-theme="kisan"] .farmer-booking > section:first-child > div {
+  align-items: center;
+  gap: 1rem;
+}
+html[data-theme="kisan"] .farmer-booking > section:first-child .grid {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: #e7f3e6 !important;
+  color: #276b43 !important;
+}
+html[data-theme="kisan"] .farmer-booking > section:first-child .text-\[10px\] {
+  color: #8a611b !important;
+  font-size: 11px !important;
+  letter-spacing: .12em;
+}
+html[data-theme="kisan"] .farmer-booking > section:first-child h1 {
+  margin-top: .45rem;
+  color: #173522 !important;
+  font-size: clamp(2rem,4vw,3rem) !important;
+  line-height: 1.05;
+  letter-spacing: -.035em;
+}
+html[data-theme="kisan"] .farmer-booking > section:first-child p {
+  margin-top: .65rem;
+  max-width: 62ch;
+  color: #5a6b5d !important;
+  font-size: .9rem !important;
+  line-height: 1.7 !important;
+}
+html[data-theme="kisan"] .farmer-booking .farmer-step-strip {
+  padding: 1rem;
+  border: 1px solid #dfe7dc;
+  border-radius: 18px;
+  background: #f4f7f1;
+  box-shadow: none;
+}
+html[data-theme="kisan"] .farmer-booking .farmer-step-strip > div {
+  padding: .75rem .9rem;
+  border-radius: 14px;
+}
+html[data-theme="kisan"] .farmer-booking .farmer-step-strip > div.is-current {
+  background: #fff;
+  box-shadow: 0 6px 20px rgba(38,76,43,.07);
+}
+html[data-theme="kisan"] .farmer-booking .farmer-step-strip strong {
+  font-size: .82rem;
+  color: #173522;
+}
+html[data-theme="kisan"] .farmer-booking .farmer-step-strip small {
+  color: #68776b;
+  line-height: 1.45;
+}
+html[data-theme="kisan"] .farmer-booking > section.grid > div,
+html[data-theme="kisan"] .farmer-booking > section.grid > aside {
+  padding: clamp(1.15rem,2.5vw,1.6rem) !important;
+  border: 1px solid #dfe7dc !important;
+  border-radius: 20px !important;
+  background: #fff !important;
+  box-shadow: 0 12px 32px rgba(37,75,44,.06);
+}
+html[data-theme="kisan"] .farmer-booking label {
+  color: #526558 !important;
+  font-size: .76rem !important;
+  letter-spacing: .01em;
+}
+html[data-theme="kisan"] .farmer-booking select,
+html[data-theme="kisan"] .farmer-booking input[type="date"] {
+  min-height: 48px !important;
+  border: 1px solid #cfdccf !important;
+  background: #fbfcfa !important;
+  color: #173522 !important;
+  box-shadow: none !important;
+}
+html[data-theme="kisan"] .farmer-booking select:focus,
+html[data-theme="kisan"] .farmer-booking input[type="date"]:focus {
+  border-color: #6d9c78 !important;
+  box-shadow: 0 0 0 4px rgba(39,107,67,.10) !important;
+}
+html[data-theme="kisan"] .farmer-booking .rounded-xl.border-slate-800 {
+  background: #f7faf5 !important;
+  border-color: #e1e8de !important;
+}
+html[data-theme="kisan"] .farmer-booking button {
+  min-height: 50px !important;
+  border-radius: 14px !important;
+  background: #276b43 !important;
+  box-shadow: 0 9px 22px rgba(39,107,67,.18) !important;
+}
+html[data-theme="kisan"] .farmer-booking button:hover { background: #1e5736 !important; }
+html[data-theme="kisan"] .farmer-booking aside {
+  background: linear-gradient(145deg,#fffaf0,#fffdf8) !important;
+  border-color: #ead9b9 !important;
+}
+html[data-theme="kisan"] .farmer-booking aside .text-amber-200 {
+  color: #8a611b !important;
+}
+html[data-theme="kisan"] .farmer-booking aside .text-slate-300 {
+  color: #5d6d60 !important;
+}
+html[data-theme="kisan"] .farmer-booking aside .text-amber-200.text-xl {
+  color: #a86612 !important;
+}
+
+/* Consistent card rhythm across every workspace. */
+html[data-theme="kisan"] .nirdhoom-field-app :is(.glass-panel,.glass-panel-emerald,.glass-panel-amber,.glass-panel-crimson,[class*="rounded-2xl"][class*="border"]) {
+  border-radius: 20px !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is(.glass-panel,.glass-panel-emerald,.glass-panel-amber,.glass-panel-crimson) {
+  padding: clamp(1rem,2vw,1.35rem);
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is(.glass-panel,.glass-panel-emerald,.glass-panel-amber,.glass-panel-crimson) > :is(h1,h2,h3) {
+  margin-bottom: .5rem;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is(.panel,.buyer,.metric,.research-source,.action-card) {
+  background: #fff;
+  border: 1px solid #dfe7dc;
+  border-radius: 20px;
+  box-shadow: 0 10px 28px rgba(37,75,44,.05);
+}
+
+/* Reduce visual noise from old neon utility classes. */
+html[data-theme="kisan"] .nirdhoom-field-app :is(.glow-emerald,.glow-amber,.glow-crimson) {
+  box-shadow: 0 8px 24px rgba(37,75,44,.08) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is(.badge,.overline) {
+  font-family: var(--font-body);
+  letter-spacing: .05em;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .overline {
+  color: #6f7f72;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .overline::before {
+  background: #c89743;
+}
+
+/* Wide content should stay readable instead of becoming a wall of text. */
+html[data-theme="kisan"] .nirdhoom-field-app :is(.home-intro,.home-research-story,.home-role-section,.home-product-layer,.home-split-story,.home-evidence,.home-bottom-cta) {
+  max-width: 1120px;
+  margin-left: auto;
+  margin-right: auto;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is(.home-intro p,.home-research-copy > p,.home-role-heading p,.home-layer-copy > p,.home-story-copy > p,.home-evidence-copy > p) {
+  max-width: 62ch;
+  line-height: 1.75;
+  color: #5a6b5d;
+}
+
+/* Mobile: one column, comfortable tap targets, no cramped two-column cards. */
+@media (max-width: 760px) {
+  html[data-theme="kisan"] .home-gap-heading { grid-template-columns: 1fr; gap: .8rem; }
+  html[data-theme="kisan"] .home-gap-grid { grid-template-columns: 1fr; }
+  html[data-theme="kisan"] .home-gap-grid article { min-height: auto; }
+  html[data-theme="kisan"] .home-gap-answer { align-items: stretch; flex-direction: column; }
+  html[data-theme="kisan"] .home-gap-answer div { padding-right: 0; }
+  html[data-theme="kisan"] .home-gap-answer a { justify-content: center; }
+  html[data-theme="kisan"] .farmer-booking > section.grid { grid-template-columns: 1fr !important; }
+  html[data-theme="kisan"] .farmer-booking .farmer-step-strip { overflow: visible; }
+  html[data-theme="kisan"] .farmer-booking .farmer-step-strip > div { padding: .7rem; }
+}
+@media (max-width: 480px) {
+  html[data-theme="kisan"] .farmer-booking { padding-left: 0; padding-right: 0; }
+  html[data-theme="kisan"] .farmer-booking > section:first-child { border-radius: 18px; }
+  html[data-theme="kisan"] .farmer-booking > section:first-child h1 { font-size: 1.9rem !important; }
+  html[data-theme="kisan"] .farmer-booking .farmer-step-strip { padding: .7rem; }
+  html[data-theme="kisan"] .farmer-booking .farmer-step-strip > i { display:none; }
+}
