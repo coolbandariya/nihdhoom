@@ -400,3 +400,102 @@ html[data-theme="kisan"] .nirdhoom-field-app .field-more-button{
     padding-right:14px!important;
   }
 }
+
+/* =========================================================
+   MAP — clean field-operations map, never dark/HUD
+   ========================================================= */
+html[data-theme="kisan"] .nirdhoom-field-app :where(.leaflet-container,.map-container,.field-map,.ops-map,.tracking-map){
+  background:#EAF2E8!important;
+  color:#0F172A!important;
+  border:1px solid #CBD5E1!important;
+  border-radius:16px!important;
+  overflow:hidden!important;
+  isolation:isolate;
+}
+
+/* Never apply a dark-mode/invert filter to actual map imagery. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(.leaflet-container .leaflet-tile-container img,.leaflet-container .leaflet-tile-pane img){
+  filter:none!important;
+  opacity:1!important;
+  visibility:visible!important;
+  mix-blend-mode:normal!important;
+}
+
+/* Keep the map canvas/panes visually intact instead of looking like a HUD. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(.leaflet-pane,.leaflet-map-pane,.leaflet-tile-pane,.leaflet-overlay-pane,.leaflet-marker-pane,.leaflet-shadow-pane,.leaflet-popup-pane){
+  filter:none!important;
+  mix-blend-mode:normal!important;
+}
+
+/* Crisp field geometry: readable green boundary, subtle fill, no neon glow. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(.leaflet-overlay-pane path){
+  vector-effect:non-scaling-stroke;
+  stroke:#15803D!important;
+  stroke-width:3!important;
+  stroke-opacity:.9!important;
+  fill:#22C55E!important;
+  fill-opacity:.12!important;
+}
+
+/* Map UI floats above the map as normal white controls. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(.leaflet-control,.leaflet-bar,.map-control,.map-overlay,.gis-control){
+  color:#0F172A!important;
+  background:rgba(255,255,255,.97)!important;
+  border:1px solid #CBD5E1!important;
+  border-radius:10px!important;
+  box-shadow:0 6px 18px rgba(15,23,42,.12)!important;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(.leaflet-bar a,.leaflet-control button){
+  width:36px!important;
+  height:36px!important;
+  display:grid!important;
+  place-items:center!important;
+  color:#334155!important;
+  background:#FFFFFF!important;
+  border:0!important;
+  border-bottom:1px solid #E2E8F0!important;
+  box-shadow:none!important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(.leaflet-bar a:last-child){
+  border-bottom:0!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.leaflet-bar a:hover,.leaflet-control button:hover){
+  background:#F0FDF4!important;
+  color:#166534!important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(.leaflet-popup-content-wrapper,.leaflet-popup-tip){
+  background:#FFFFFF!important;
+  color:#0F172A!important;
+  border:1px solid #E2E8F0!important;
+  box-shadow:0 12px 28px rgba(15,23,42,.14)!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.leaflet-popup-content){
+  color:#0F172A!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.leaflet-control-attribution){
+  padding:4px 7px!important;
+  border:0!important;
+  border-radius:7px!important;
+  color:#475569!important;
+  background:rgba(255,255,255,.9)!important;
+  box-shadow:0 2px 8px rgba(15,23,42,.08)!important;
+  font-size:10px!important;
+}
+
+/* Preserve a usable map height on every viewport. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(.leaflet-container){
+  min-height:360px;
+  width:100%!important;
+}
+@media(max-width:760px){
+  html[data-theme="kisan"] .nirdhoom-field-app :where(.leaflet-container){
+    min-height:300px;
+    border-radius:12px!important;
+  }
+}
+\n
