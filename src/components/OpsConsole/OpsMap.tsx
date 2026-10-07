@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import { Field, Machine, BurnEvent, StorageYard, Buyer, LatLng } from '../../types';
 import { Layers, Flame, MapPin } from 'lucide-react';
-import Globe from '../react-bits/globe';
 
 interface OpsMapProps {
   fields: Field[];
@@ -33,8 +32,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
   const mapInstanceRef = useRef<L.Map | null>(null);
   const layerGroupRef = useRef<L.LayerGroup | null>(null);
 
-  const [mapMode, setMapMode] = useState<'field' | 'globe'>('field');
-  const [tileMode, setTileMode] = useState<'satellite' | 'dark'>('satellite');
+  const [tileMode] = useState<'satellite'>('satellite');
   const [showFires, setShowFires] = useState(true);
   const [showMachines, setShowMachines] = useState(true);
   const [showFields, setShowFields] = useState(true);
@@ -48,7 +46,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
 
   // Initialize Leaflet map
   useEffect(() => {
-    if (mapMode !== 'field' || !mapContainerRef.current) return;
+    if (!mapContainerRef.current) return;
     if (mapInstanceRef.current) return;
 
     // Centered at Sangrur, Punjab
@@ -74,7 +72,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       map.remove();
       mapInstanceRef.current = null;
     };
-  }, [mapMode]);
+  }, []);
 
   // Live fleet tracking animation: machines drift toward assigned fields every 5s
   useEffect(() => {
@@ -106,7 +104,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
   // Update base tile layer
   useEffect(() => {
     const map = mapInstanceRef.current;
-    if (mapMode !== 'field' || !map) return;
+    if (!map) return;
 
     // Remove existing tile layers
     map.eachLayer((layer) => {
@@ -128,13 +126,13 @@ export const OpsMap: React.FC<OpsMapProps> = ({
         { maxZoom: 19, subdomains: 'abcd' }
       ).addTo(map);
     }
-  }, [tileMode, mapMode]);
+  }, [tileMode]);
 
   // Render Polygons, Markers, FIRMS Fires, and Route
   useEffect(() => {
     const map = mapInstanceRef.current;
     const layerGroup = layerGroupRef.current;
-    if (mapMode !== 'field' || !map || !layerGroup) return;
+    if (!map || !layerGroup) return;
 
     layerGroup.clearLayers();
 
@@ -322,59 +320,28 @@ export const OpsMap: React.FC<OpsMapProps> = ({
     showFires,
     showYards,
     animatedPositions,
-    mapMode,
   ]);
 
   // Pan to selected field
   useEffect(() => {
-    if (mapMode === 'field' && selectedField && mapInstanceRef.current) {
+    if (selectedField && mapInstanceRef.current) {
       mapInstanceRef.current.flyTo(
         [selectedField.center.lat, selectedField.center.lng],
         13,
         { duration: 1.2 }
       );
     }
-  }, [selectedField, mapMode]);
+  }, [selectedField]);
 
   return (
     <div className="ops-map-surface relative w-full h-[540px] lg:h-[620px] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
-      {/* Map / network globe */}
-      {mapMode === 'globe' ? (
-        <div className="relative w-full h-full bg-[#0d2418] overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(242,169,0,.13),transparent_42%),linear-gradient(180deg,#102b1c,#07150d)]" />
-          <div className="relative z-[1] w-full h-full grid place-items-center">
-            <Globe
-              className="w-full h-full"
-              primaryColor="rgb(242, 169, 0)"
-              neutralColor="rgb(113, 171, 126)"
-              atmosphereColor="rgb(242, 169, 0)"
-              globeColor="rgb(18, 61, 36)"
-              showAtmosphere
-              autoRotateSpeed={0.45}
-              interactive
-              enableZoom
-              arcCount={Math.min(12, Math.max(6, machines.length + 3))}
-              arcInterval={5200}
-              arcAnimationDuration={1800}
-              cameraAltitude={2.35}
-              pointSize={0.22}
-              pointResolution={5}
-              atmosphereAltitude={0.2}
-              landDotRows={150}
-            />
-          </div>
-          <div className="absolute left-4 bottom-4 z-10 max-w-sm rounded-2xl border border-white/10 bg-[#10291a]/90 px-4 py-3 text-white shadow-xl backdrop-blur-md">
-            <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#f2a900]">NIRDHOOM network view</div>
-            <div className="mt-1 text-sm font-semibold">Animated movement between field and recovery nodes</div>
-            <div className="mt-1 text-xs leading-5 text-white/65">Use Field GIS for exact polygons, fires, baler positions and route inspection.</div>
-          </div>
-        </div>
-      ) : mapError ? (
-        <div className="w-full h-full grid place-items-center bg-slate-950 p-6 text-center">
+      {/* Field GIS map — this is the only map shown in Machine Worker tracking. */}
+      {mapError ? (
+        <div className="w-full h-full grid place-items-center bg-slate-50 p-6 text-center">
           <div className="max-w-md">
-            <div className="text-sm font-bold text-amber-300">Operational map unavailable</div>
-            <p className="mt-2 text-xs text-slate-400">The rest of NIRDHOOM is still available. Check your network/map tile access and reload.</p>
-            <p className="mt-2 text-[10px] text-slate-600 break-words">{mapError}</p>
+            <div className="text-sm font-bold text-amber-700">Operational map unavailable</div>
+            <p className="mt-2 text-xs text-slate-500">Check your network/map tile access and reload.</p>
+            <p className="mt-2 text-[10px] text-slate-500 break-words">{mapError}</p>
           </div>
         </div>
       ) : (
@@ -391,41 +358,36 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       </div>
 
       {/* Floating Control Overlay Top-Right */}
-      <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
-<div className="bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-lg p-1.5 flex gap-1 shadow-lg">
-          <button onClick={() => setMapMode('field')} className={`px-2.5 py-1 text-xs font-semibold rounded transition-all cursor-pointer ${mapMode === 'field' ? 'bg-[#f2a900] text-[#173522]' : 'text-slate-400 hover:text-white'}`}>Field GIS</button>
-          <button onClick={() => setMapMode('globe')} className={`px-2.5 py-1 text-xs font-semibold rounded transition-all cursor-pointer ${mapMode === 'globe' ? 'bg-[#f2a900] text-[#173522]' : 'text-slate-400 hover:text-white'}`}>Network Globe</button>
+      <div className="absolute top-3 right-3 z-10">
+        <div className="bg-white/95 backdrop-blur-md border border-slate-200 rounded-lg p-1.5 shadow-lg text-xs font-semibold text-slate-700">
+          Satellite field map
         </div>
-        {/* Tile mode switcher */}
-        {mapMode === 'field' && <div className="bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-lg p-1.5 flex gap-1 shadow-lg">
-          <button
-            onClick={() => setTileMode('satellite')}
-            className={`px-2.5 py-1 text-xs font-semibold rounded transition-all cursor-pointer ${
-              tileMode === 'satellite'
-                ? 'bg-emerald-600 text-white shadow'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            🛰️ Satellite imagery
-          </button>
-          <button
-            onClick={() => setTileMode('dark')}
-            className={`px-2.5 py-1 text-xs font-semibold rounded transition-all cursor-pointer ${
-              tileMode === 'dark'
-                ? 'bg-emerald-600 text-white shadow'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            🌑 Dark Ops Mode
-          </button>
-        </div>}
 
-        {/* Layer Toggles */}
-        {mapMode === 'field' && <div className="bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-lg p-2 flex flex-col gap-1.5 shadow-lg text-xs font-medium">
-          <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-0.5 flex items-center gap-1">
-            <Layers className="w-3 h-3 text-emerald-400" />
+        <div className="mt-2 bg-white/95 backdrop-blur-md border border-slate-200 rounded-lg p-2 flex flex-col gap-1.5 shadow-lg text-xs font-medium">
+          <div className="text-[10px] uppercase font-bold text-slate-500 tracking-wider mb-0.5 flex items-center gap-1">
+            <Layers className="w-3 h-3 text-emerald-600" />
             <span>GIS Map Layers</span>
           </div>
+
+          <label className="flex items-center justify-between gap-3 text-slate-700 hover:text-slate-900 cursor-pointer">
+            <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-emerald-500"></span><span>Customer Polygons ({fields.length})</span></span>
+            <input type="checkbox" checked={showFields} onChange={(e) => setShowFields(e.target.checked)} className="accent-emerald-600 rounded" />
+          </label>
+          <label className="flex items-center justify-between gap-3 text-slate-700 hover:text-slate-900 cursor-pointer">
+            <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span><span>Subsidised Balers ({machines.length})</span></span>
+            <input type="checkbox" checked={showMachines} onChange={(e) => setShowMachines(e.target.checked)} className="accent-emerald-600 rounded" />
+          </label>
+          <label className="flex items-center justify-between gap-3 text-slate-700 hover:text-slate-900 cursor-pointer">
+            <span className="flex items-center gap-1.5"><Flame className="w-3.5 h-3.5 text-red-500" /><span className="text-red-600 font-semibold">NASA FIRMS Fires ({fireEvents.length})</span></span>
+            <input type="checkbox" checked={showFires} onChange={(e) => setShowFires(e.target.checked)} className="accent-red-500 rounded" />
+          </label>
+          <label className="flex items-center justify-between gap-3 text-slate-700 hover:text-slate-900 cursor-pointer">
+            <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-blue-500"></span><span>Yards & Offtake ({storageYards.length})</span></span>
+            <input type="checkbox" checked={showYards} onChange={(e) => setShowYards(e.target.checked)} className="accent-blue-600 rounded" />
+          </label>
+        </div>
+      </div>
+div>
 
           <label className="flex items-center justify-between gap-3 text-slate-300 hover:text-white cursor-pointer">
             <span className="flex items-center gap-1.5">
@@ -478,11 +440,10 @@ export const OpsMap: React.FC<OpsMapProps> = ({
               className="accent-blue-500 rounded"
             />
           </label>
-        </div>}
-      </div>
+        </div></div>
 
       {/* Floating Bottom Quick Zoom Bar */}
-      {mapMode === 'field' && <div className="absolute bottom-3 left-3 z-10 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-lg p-1.5 flex items-center gap-2 shadow-lg text-xs">
+      {<div className="absolute bottom-3 left-3 z-10 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-lg p-1.5 flex items-center gap-2 shadow-lg text-xs">
         <span className="text-slate-400 font-medium px-1 flex items-center gap-1">
           <MapPin className="w-3.5 h-3.5 text-emerald-400" />
           <span>Hotspot Clusters:</span>
@@ -514,7 +475,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       </div>}
 
       {/* Floating Map Legend Bottom-Right */}
-      {mapMode === 'field' && <div className="absolute bottom-3 right-3 z-10 hidden sm:flex items-center gap-3 bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-800 text-[11px] text-slate-300">
+      {<div className="absolute bottom-3 right-3 z-10 hidden sm:flex items-center gap-3 bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-800 text-[11px] text-slate-300">
         <span className="flex items-center gap-1">
           <span className="w-3 h-2 rounded bg-emerald-500 border border-emerald-300 inline-block"></span>
           <span>Nirdhoom 0-Burn Field</span>
@@ -527,7 +488,6 @@ export const OpsMap: React.FC<OpsMapProps> = ({
           <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping inline-block"></span>
           <span className="text-red-400 font-semibold">External Fire Storm</span>
         </span>
-      </div>}
-    </div>
+      </div></div>
   );
 };
