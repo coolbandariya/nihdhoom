@@ -335,7 +335,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
 
   return (
     <div className="ops-map-surface relative w-full h-[540px] lg:h-[620px] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
-      {/* Field GIS map — this is the only map shown in Machine Worker tracking. */}
+      {/* Field GIS map — the only map mode in Machine Worker tracking. */}
       {mapError ? (
         <div className="w-full h-full grid place-items-center bg-slate-50 p-6 text-center">
           <div className="max-w-md">
@@ -359,91 +359,35 @@ export const OpsMap: React.FC<OpsMapProps> = ({
 
       {/* Floating Control Overlay Top-Right */}
       <div className="absolute top-3 right-3 z-10">
-        <div className="bg-white/95 backdrop-blur-md border border-slate-200 rounded-lg p-1.5 shadow-lg text-xs font-semibold text-slate-700">
+        <div className="bg-white/95 backdrop-blur-md border border-slate-200 rounded-lg p-2 shadow-lg text-xs font-semibold text-slate-700">
           Satellite field map
         </div>
-
         <div className="mt-2 bg-white/95 backdrop-blur-md border border-slate-200 rounded-lg p-2 flex flex-col gap-1.5 shadow-lg text-xs font-medium">
           <div className="text-[10px] uppercase font-bold text-slate-500 tracking-wider mb-0.5 flex items-center gap-1">
             <Layers className="w-3 h-3 text-emerald-600" />
             <span>GIS Map Layers</span>
           </div>
-
-          <label className="flex items-center justify-between gap-3 text-slate-700 hover:text-slate-900 cursor-pointer">
+          <label className="flex items-center justify-between gap-3 text-slate-700 cursor-pointer">
             <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-emerald-500"></span><span>Customer Polygons ({fields.length})</span></span>
             <input type="checkbox" checked={showFields} onChange={(e) => setShowFields(e.target.checked)} className="accent-emerald-600 rounded" />
           </label>
-          <label className="flex items-center justify-between gap-3 text-slate-700 hover:text-slate-900 cursor-pointer">
+          <label className="flex items-center justify-between gap-3 text-slate-700 cursor-pointer">
             <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span><span>Subsidised Balers ({machines.length})</span></span>
             <input type="checkbox" checked={showMachines} onChange={(e) => setShowMachines(e.target.checked)} className="accent-emerald-600 rounded" />
           </label>
-          <label className="flex items-center justify-between gap-3 text-slate-700 hover:text-slate-900 cursor-pointer">
+          <label className="flex items-center justify-between gap-3 text-slate-700 cursor-pointer">
             <span className="flex items-center gap-1.5"><Flame className="w-3.5 h-3.5 text-red-500" /><span className="text-red-600 font-semibold">NASA FIRMS Fires ({fireEvents.length})</span></span>
             <input type="checkbox" checked={showFires} onChange={(e) => setShowFires(e.target.checked)} className="accent-red-500 rounded" />
           </label>
-          <label className="flex items-center justify-between gap-3 text-slate-700 hover:text-slate-900 cursor-pointer">
+          <label className="flex items-center justify-between gap-3 text-slate-700 cursor-pointer">
             <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-blue-500"></span><span>Yards & Offtake ({storageYards.length})</span></span>
             <input type="checkbox" checked={showYards} onChange={(e) => setShowYards(e.target.checked)} className="accent-blue-600 rounded" />
           </label>
         </div>
       </div>
-div>
-
-          <label className="flex items-center justify-between gap-3 text-slate-300 hover:text-white cursor-pointer">
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500"></span>
-              <span>Customer Polygons ({fields.length})</span>
-            </span>
-            <input
-              type="checkbox"
-              checked={showFields}
-              onChange={(e) => setShowFields(e.target.checked)}
-              className="accent-emerald-500 rounded"
-            />
-          </label>
-
-          <label className="flex items-center justify-between gap-3 text-slate-300 hover:text-white cursor-pointer">
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-              <span>Subsidised Balers ({machines.length})</span>
-            </span>
-            <input
-              type="checkbox"
-              checked={showMachines}
-              onChange={(e) => setShowMachines(e.target.checked)}
-              className="accent-emerald-500 rounded"
-            />
-          </label>
-
-          <label className="flex items-center justify-between gap-3 text-slate-300 hover:text-white cursor-pointer">
-            <span className="flex items-center gap-1.5">
-              <Flame className="w-3.5 h-3.5 text-red-500 animate-pulse" />
-              <span className="text-red-300 font-semibold">NASA FIRMS Fires ({fireEvents.length})</span>
-            </span>
-            <input
-              type="checkbox"
-              checked={showFires}
-              onChange={(e) => setShowFires(e.target.checked)}
-              className="accent-red-500 rounded"
-            />
-          </label>
-
-          <label className="flex items-center justify-between gap-3 text-slate-300 hover:text-white cursor-pointer">
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-blue-500"></span>
-              <span>Yards & Offtake ({storageYards.length})</span>
-            </span>
-            <input
-              type="checkbox"
-              checked={showYards}
-              onChange={(e) => setShowYards(e.target.checked)}
-              className="accent-blue-500 rounded"
-            />
-          </label>
-        </div></div>
 
       {/* Floating Bottom Quick Zoom Bar */}
-      {<div className="absolute bottom-3 left-3 z-10 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-lg p-1.5 flex items-center gap-2 shadow-lg text-xs">
+      <div className="absolute bottom-3 left-3 z-10 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-lg p-1.5 flex items-center gap-2 shadow-lg text-xs">
         <span className="text-slate-400 font-medium px-1 flex items-center gap-1">
           <MapPin className="w-3.5 h-3.5 text-emerald-400" />
           <span>Hotspot Clusters:</span>
@@ -472,10 +416,10 @@ div>
         >
           Bhawanigarh
         </button>
-      </div>}
+      </div>
 
       {/* Floating Map Legend Bottom-Right */}
-      {<div className="absolute bottom-3 right-3 z-10 hidden sm:flex items-center gap-3 bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-800 text-[11px] text-slate-300">
+      <div className="absolute bottom-3 right-3 z-10 hidden sm:flex items-center gap-3 bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-800 text-[11px] text-slate-300">
         <span className="flex items-center gap-1">
           <span className="w-3 h-2 rounded bg-emerald-500 border border-emerald-300 inline-block"></span>
           <span>Nirdhoom 0-Burn Field</span>
@@ -488,6 +432,7 @@ div>
           <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping inline-block"></span>
           <span className="text-red-400 font-semibold">External Fire Storm</span>
         </span>
-      </div></div>
+      </div>}
+    </div>
   );
 };
