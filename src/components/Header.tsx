@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, startTransition } from 'react';
 import { prefetchWorkspace } from '../lib/workspacePrefetch';
 import {
   Activity, BarChart3, Bot, ChevronDown, ClipboardList, HelpCircle, Leaf, Map,
-  Menu, MessageSquare, Satellite, Search, ShieldCheck, Sparkles, Smartphone,
+  Menu, MessageSquare, Satellite, Search, ShieldCheck, Smartphone,
   TrendingUp, UserCheck, Wheat, X, Tractor, CircleDollarSign, Trophy
 } from 'lucide-react';
 
@@ -41,7 +41,6 @@ const secondaryNav: NavItem[] = [
   { id: 'BALER_OPERATOR', label: 'Machine Worker', icon: Smartphone, description: 'Tools for the person driving the machine' },
   { id: 'FARMER_SURFACE', label: 'Telegram Help', icon: MessageSquare, description: 'Get updates and help on Telegram' },
   { id: 'FARMER_KYC', label: 'My Profile', icon: UserCheck, description: 'Phone verification and farmer consent' },
-  { id: 'DEMO_RUNNER', label: 'How NIRDHOOM Works', icon: Sparkles, description: 'See the complete journey step by step' },
 ];
 
 export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
