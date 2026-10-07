@@ -34,8 +34,6 @@ const primaryNav: NavItem[] = [
   { id: 'FARMER_ONBOARDING', label: 'Book Parali Pickup', short: 'Book', icon: Tractor, description: 'Choose your field and book machine pickup' },
   { id: 'OPS_CONSOLE', label: 'Track My Machine', short: 'Track', icon: Map, description: 'See where the machine is and what happens next' },
   { id: 'RESIDUE_POOLS', label: 'Parali Market', short: 'Market', icon: Leaf, description: 'See where collected parali can go' },
-  { id: 'SATELLITE_AUDIT', label: 'Check My Proof', short: 'Proof', icon: ShieldCheck, description: 'See photos, field proof and verification' },
-  { id: 'IMPACT_RESEARCH', label: 'Why It Matters', short: 'Impact', icon: BarChart3, description: 'Simple facts about crop residue and air quality' },
 ];
 
 const secondaryNav: NavItem[] = [
@@ -93,18 +91,18 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
             className="group flex min-w-0 items-center gap-3 rounded-2xl px-1 py-1.5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
             aria-label="Go to NIRDHOOM Home"
           >
-            <span className="relative grid h-11 w-11 shrink-0 place-items-center rounded-2xl border bg-emerald-50 shadow-sm">
+            <span className="relative grid h-10 w-10 shrink-0 place-items-center rounded-xl border bg-emerald-50 shadow-sm">
               <span className="text-lg font-black text-emerald-700">नि</span>
               <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-white bg-emerald-500" />
             </span>
             <span className="hidden min-w-0 sm:block">
               <span className="flex items-center gap-2">
-                <span className="font-['Outfit'] text-[16px] font-black tracking-[0.08em] text-emerald-950">NIRDHOOM</span>
+                <span className="font-['Manrope'] text-[15px] font-extrabold tracking-[0.08em] text-emerald-950">NIRDHOOM</span>
                 <span className="rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-800">
                   {demoMode ? 'Demo' : 'Live'}
                 </span>
               </span>
-              <span className="mt-0.5 block text-[10px] font-medium text-emerald-800/60">Field-first crop-residue network</span>
+              <span className="mt-0.5 block text-[10px] font-medium text-emerald-800/60">Crop-residue field network</span>
             </span>
           </button>
 
@@ -156,7 +154,7 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
               <span className={`h-2 w-2 rounded-full ${demoMode ? 'bg-amber-500' : 'bg-emerald-500'}`} />
               <span className="font-semibold text-emerald-900/65">{demoMode ? 'Demo records' : 'Live records'}</span>
             </div>
-            <button onClick={openPitchDrawer} className="hidden sm:flex items-center gap-1.5 rounded-xl border border-emerald-700/15 bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-800 transition hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500">
+            <button onClick={openPitchDrawer} className="hidden sm:flex items-center gap-1.5 rounded-xl border border-emerald-900/10 bg-white px-3 py-2 shadow-sm text-xs font-bold text-emerald-800 transition hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500">
               <Search className="h-3.5 w-3.5" /> Brief
             </button>
             <button onClick={() => setMobileOpen((value) => !value)} className="field-menu-button grid h-11 w-11 place-items-center rounded-xl border border-emerald-900/10 bg-white text-emerald-900 lg:hidden" aria-label={mobileOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={mobileOpen}>
