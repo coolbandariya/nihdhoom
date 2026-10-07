@@ -24,6 +24,11 @@ Migrations are applied in filename order:
 16. `202610020012_nirdhoom_residue_pool_verification_gate.sql` — verified-residue gate for pooling.
 17. `202610040001_machine_privacy_and_pool_member_visibility.sql` — machine privacy and pool-member visibility.
 18. `202610040002_revoke_trigger_function_execute.sql` — revoke direct execution of trigger-only functions.
+19. `202610050001_nirdhoom_telegram_identity.sql` — authenticated Telegram identity linking and short-lived link-token consumption.
+20. `202610050002_nirdhoom_telegram_webhook_idempotency.sql` — durable Telegram update de-duplication.
+21. `20261006_nirdhoom_integrity_hardening.sql` — SECURITY DEFINER search-path hardening and residue allocation concurrency protections.
+22. `20261006_nirdhoom_residue_quantity_invariants.sql` — positive-lot and pool-target quantity invariants.
+23. `202610070001_nirdhoom_consent_withdrawal.sql` — self-service farmer consent withdrawal and profile revocation boundary.
 
 ## Release rules
 - Never reorder or rename an already-applied migration.
@@ -35,7 +40,7 @@ Migrations are applied in filename order:
 - Before a production release, record the Supabase migration status and run the RLS/integrity test suite.
 
 ## Verification checklist
-- [ ] All 18 migrations are present in the repository.
+- [ ] All 23 migrations are present in the repository.
 - [ ] Supabase migration history matches this order.
 - [ ] RLS is enabled on every tenant/business table.
 - [ ] Role escalation is blocked.
