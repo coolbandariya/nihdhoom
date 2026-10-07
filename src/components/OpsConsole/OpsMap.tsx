@@ -113,19 +113,11 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       }
     });
 
-    if (tileMode === 'satellite') {
-      // Esri World Imagery (Satellite)
-      L.tileLayer(
-        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        { maxZoom: 18, maxNativeZoom: 17 }
-      ).addTo(map);
-    } else {
-      // CartoDB Dark Matter
-      L.tileLayer(
-        'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-        { maxZoom: 19, subdomains: 'abcd' }
-      ).addTo(map);
-    }
+    // Satellite imagery only — no dark/globe mode in Machine Worker tracking.
+    L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      { maxZoom: 18, maxNativeZoom: 17 }
+    ).addTo(map);
   }, [tileMode]);
 
   // Render Polygons, Markers, FIRMS Fires, and Route
@@ -432,7 +424,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
           <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping inline-block"></span>
           <span className="text-red-400 font-semibold">External Fire Storm</span>
         </span>
-      </div>}
+      </div>
     </div>
   );
 };
