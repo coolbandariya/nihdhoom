@@ -375,3 +375,28 @@ html[data-theme="kisan"] .nirdhoom-field-app .field-more-menu .field-more-item{
   border:1px solid #E2E8F0!important;
   border-radius:12px!important;
 }
+
+
+/* Navigation spacing — keep every option comfortably separated and readable. */
+html[data-theme="kisan"] .nirdhoom-field-app .nirdhoom-field-header nav[aria-label="Primary navigation"]{
+  gap:8px!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .field-nav-item,
+html[data-theme="kisan"] .nirdhoom-field-app .field-more-button{
+  margin:0 2px!important;
+  padding-left:12px!important;
+  padding-right:12px!important;
+  white-space:nowrap!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .field-more-button{
+  margin-left:10px!important;
+}
+@media (min-width:1280px){
+  html[data-theme="kisan"] .nirdhoom-field-app .nirdhoom-field-header nav[aria-label="Primary navigation"]{
+    gap:10px!important;
+  }
+  html[data-theme="kisan"] .nirdhoom-field-app .field-nav-item{
+    padding-left:14px!important;
+    padding-right:14px!important;
+  }
+}
