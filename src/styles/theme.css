@@ -1208,3 +1208,377 @@ html[data-theme="kisan"] .nirdhoom-field-app .nirdhoom-dark-demo :is(.text-slate
     width: 100%;
   }
 }
+
+
+/* =========================================================
+   NIRDHOOM — React Bits inspired interaction layer
+   Motion is subtle, purposeful and farmer-safe.
+   ========================================================= */
+
+html[data-theme="kisan"] .nirdhoom-field-app {
+  --nb-bg: #f6f8f3;
+  --nb-surface: #ffffff;
+  --nb-surface-soft: #f1f5ef;
+  --nb-text: #17352a;
+  --nb-muted: #68766d;
+  --nb-line: #dce5da;
+  --nb-green: #2d6a45;
+  --nb-green-dark: #1f5235;
+  --nb-gold: #c8953d;
+  --nb-shadow: 0 18px 50px rgba(31,82,53,.08);
+  --nb-shadow-hover: 0 24px 60px rgba(31,82,53,.13);
+  --nb-ease: cubic-bezier(.22,1,.36,1);
+}
+
+/* Replace the old HUD vocabulary with a quieter product surface. */
+html[data-theme="kisan"] .nirdhoom-field-app {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(45,106,69,.055), transparent 28rem),
+    radial-gradient(circle at 94% 12%, rgba(200,149,61,.045), transparent 24rem),
+    var(--nb-bg) !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .field-main {
+  position: relative;
+  isolation: isolate;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .field-main::before {
+  content:"";
+  position:fixed;
+  inset:72px 0 0;
+  pointer-events:none;
+  z-index:-1;
+  opacity:.34;
+  background-image:radial-gradient(rgba(45,106,69,.13) .7px, transparent .7px);
+  background-size:22px 22px;
+  mask-image:linear-gradient(to bottom, black, transparent 70%);
+}
+
+/* Workspace transitions — inspired by React Bits stagger/reveal patterns. */
+@keyframes nb-page-in {
+  from { opacity:0; transform:translateY(14px) scale(.992); filter:blur(3px); }
+  to { opacity:1; transform:none; filter:none; }
+}
+@keyframes nb-soft-pop {
+  from { opacity:0; transform:translateY(9px); }
+  to { opacity:1; transform:none; }
+}
+@keyframes nb-shine {
+  from { transform:translateX(-120%); }
+  to { transform:translateX(120%); }
+}
+@keyframes nb-pulse {
+  0%,100% { box-shadow:0 0 0 0 rgba(45,106,69,.16); }
+  50% { box-shadow:0 0 0 7px rgba(45,106,69,0); }
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .field-page,
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero {
+  animation:nb-page-in .52s var(--nb-ease) both;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .field-page > *,
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero + * {
+  animation:nb-soft-pop .48s var(--nb-ease) both;
+}
+
+/* Premium interactive cards: depth, spotlight, no neon. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .panel,.metric,.action-card,.buyer,.research-source,
+  .home-role-card,.home-mini-grid > div,.home-proof > div,
+  .market-card,.market-list-row,.market-demand-row,.market-pool-card
+) {
+  position:relative;
+  overflow:hidden;
+  transition:
+    transform .35s var(--nb-ease),
+    box-shadow .35s var(--nb-ease),
+    border-color .35s ease,
+    background-color .35s ease;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .panel,.metric,.action-card,.buyer,.research-source,
+  .home-role-card,.home-mini-grid > div,.home-proof > div,
+  .market-card,.market-list-row,.market-demand-row,.market-pool-card
+)::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:0;
+  background:radial-gradient(
+    320px circle at var(--spot-x,50%) var(--spot-y,0%),
+    rgba(45,106,69,.075),
+    transparent 62%
+  );
+  transition:opacity .35s ease;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .panel,.metric,.action-card,.buyer,.research-source,
+  .home-role-card,.home-mini-grid > div,.home-proof > div,
+  .market-card,.market-list-row,.market-demand-row,.market-pool-card
+):hover {
+  transform:translateY(-4px);
+  box-shadow:var(--nb-shadow-hover)!important;
+  border-color:#c8d8c5!important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .panel,.metric,.action-card,.buyer,.research-source,
+  .home-role-card,.home-mini-grid > div,.home-proof > div,
+  .market-card,.market-list-row,.market-demand-row,.market-pool-card
+):hover::after {
+  opacity:1;
+}
+
+/* Interactive spotlight follows the pointer without requiring a JS dependency. */
+html[data-theme="kisan"] .nirdhoom-field-app .home-role-card,
+html[data-theme="kisan"] .nirdhoom-field-app .metric,
+html[data-theme="kisan"] .nirdhoom-field-app .action-card {
+  --spot-x:50%;
+  --spot-y:0%;
+}
+
+/* Buttons get the tactile React Bits treatment. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .workspace-action,.home-text-button,.market-primary-action,
+  .primary-button,.btn-primary,.field-nav-item,.field-more-button
+) {
+  position:relative;
+  overflow:hidden;
+  transition:
+    transform .28s var(--nb-ease),
+    box-shadow .28s var(--nb-ease),
+    background-color .2s ease,
+    border-color .2s ease;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .workspace-action,.home-text-button,.market-primary-action,
+  .primary-button,.btn-primary
+)::before {
+  content:"";
+  position:absolute;
+  inset:0 auto 0 -45%;
+  width:28%;
+  transform:skewX(-18deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);
+  pointer-events:none;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .workspace-action,.home-text-button,.market-primary-action,
+  .primary-button,.btn-primary
+):hover {
+  transform:translateY(-2px);
+  box-shadow:0 10px 26px rgba(45,106,69,.16);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .workspace-action,.home-text-button,.market-primary-action,
+  .primary-button,.btn-primary
+):hover::before {
+  animation:nb-shine .65s var(--nb-ease);
+}
+
+/* Navigation gets a compact floating-pill active state. */
+html[data-theme="kisan"] .nirdhoom-field-app .field-nav-item,
+html[data-theme="kisan"] .nirdhoom-field-app .field-more-button {
+  position:relative;
+  border:1px solid transparent;
+  border-radius:12px;
+  color:#52635a!important;
+  background:transparent!important;
+  transition:all .25s var(--nb-ease);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .field-nav-item:hover,
+html[data-theme="kisan"] .nirdhoom-field-app .field-more-button:hover {
+  color:var(--nb-green-dark)!important;
+  background:#f1f6ef!important;
+  transform:translateY(-1px);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .field-nav-item.is-active,
+html[data-theme="kisan"] .nirdhoom-field-app .field-more-button.is-active {
+  color:var(--nb-green-dark)!important;
+  background:#e8f2e6!important;
+  border-color:#d2e4ce!important;
+  box-shadow:0 3px 12px rgba(31,82,53,.07);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .field-nav-item.is-active::after {
+  content:"";
+  position:absolute;
+  left:14px;
+  right:14px;
+  bottom:-5px;
+  height:2px;
+  border-radius:999px;
+  background:var(--nb-green);
+}
+
+/* Hero: editorial rather than dashboard/HUD. */
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero {
+  border-radius:24px!important;
+  box-shadow:var(--nb-shadow)!important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(110deg,rgba(255,255,255,.3),transparent 42%);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero-image {
+  transition:transform .7s var(--nb-ease);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero:hover .workspace-hero-image {
+  transform:scale(1.025);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero-image img {
+  transition:transform .8s var(--nb-ease), filter .5s ease;
+  filter:saturate(.88) contrast(.97);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero:hover .workspace-hero-image img {
+  transform:scale(1.035);
+  filter:saturate(.98) contrast(1);
+}
+
+/* Journey steps become a connected progress system. */
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-journey {
+  position:relative;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-journey-step {
+  transition:all .28s var(--nb-ease)!important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-journey-step:hover {
+  transform:translateY(-2px);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-journey-step.is-current .workspace-journey-number {
+  animation:nb-pulse 2.2s ease-in-out infinite;
+}
+
+/* Live status indicators should feel alive, not sci-fi. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(.home-live-pill,.workspace-mode) i,
+html[data-theme="kisan"] .nirdhoom-field-app .animate-live-pulse {
+  animation:nb-pulse 2.2s ease-in-out infinite;
+}
+
+/* Home hero gets a stronger editorial hierarchy. */
+html[data-theme="kisan"] .nirdhoom-field-app .home-hero {
+  border-radius:24px!important;
+  box-shadow:0 24px 70px rgba(31,82,53,.10)!important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .home-hero-overlay {
+  background:linear-gradient(90deg,rgba(23,53,42,.74),rgba(23,53,42,.36) 48%,rgba(23,53,42,.04))!important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .home-role-card {
+  border-radius:18px!important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .home-role-icon {
+  transition:transform .35s var(--nb-ease),background-color .25s ease;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .home-role-card:hover .home-role-icon {
+  transform:translateY(-3px) scale(1.04) rotate(-2deg);
+}
+
+/* Proof numbers: subtle reveal rather than KPI-wall styling. */
+html[data-theme="kisan"] .nirdhoom-field-app .home-proof > div {
+  background:#fff!important;
+  border:1px solid var(--nb-line)!important;
+  border-radius:18px;
+  box-shadow:0 6px 22px rgba(31,82,53,.045)!important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .home-proof > div strong {
+  letter-spacing:-.045em;
+  font-variant-numeric:tabular-nums;
+}
+
+/* Images feel tactile and premium. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .home-workflow-image,.home-research-image,.home-story-image,.home-evidence-image
+) {
+  box-shadow:0 12px 30px rgba(31,82,53,.075)!important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .home-workflow-image img,.home-research-image img,.home-story-image img,.home-evidence-image img
+) {
+  transition:transform .65s var(--nb-ease),filter .45s ease;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .home-workflow-image:hover img,.home-research-image:hover img,
+  .home-story-image:hover img,.home-evidence-image:hover img
+) {
+  transform:scale(1.035);
+  filter:saturate(1.02) contrast(1.01);
+}
+
+/* More menu becomes a polished command palette instead of a plain dropdown. */
+html[data-theme="kisan"] .nirdhoom-field-app .field-more-menu {
+  animation:nb-soft-pop .3s var(--nb-ease) both;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .field-more-item {
+  transition:transform .22s var(--nb-ease),background-color .2s ease,border-color .2s ease;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .field-more-item:hover {
+  transform:translateY(-2px);
+}
+
+/* Form controls get the same premium focus treatment. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(input,select,textarea) {
+  transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(input,select,textarea):focus {
+  transform:translateY(-1px);
+}
+
+/* Map surfaces should stay operational and calm. */
+html[data-theme="kisan"] .nirdhoom-field-app .leaflet-container {
+  border-radius:18px;
+  box-shadow:inset 0 0 0 1px rgba(31,82,53,.08);
+}
+
+/* Respect accessibility and field conditions. */
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="kisan"] .nirdhoom-field-app *,
+  html[data-theme="kisan"] .nirdhoom-field-app *::before,
+  html[data-theme="kisan"] .nirdhoom-field-app *::after {
+    animation-duration:.001ms!important;
+    animation-iteration-count:1!important;
+    scroll-behavior:auto!important;
+    transition-duration:.001ms!important;
+  }
+}
+
+@media (max-width:760px) {
+  html[data-theme="kisan"] .nirdhoom-field-app .field-main::before { display:none; }
+  html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero { border-radius:18px!important; }
+  html[data-theme="kisan"] .nirdhoom-field-app :where(.panel,.metric,.action-card,.buyer,.home-role-card) {
+    transform:none!important;
+  }
+  html[data-theme="kisan"] .nirdhoom-field-app :where(.panel,.metric,.action-card,.buyer,.home-role-card):active {
+    transform:scale(.988)!important;
+  }
+}
