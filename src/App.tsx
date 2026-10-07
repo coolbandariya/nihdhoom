@@ -309,7 +309,7 @@ export function App() {
   };
 
   return (
-    <div className="nirdhoom-field-app min-h-screen bg-[var(--bg-deep)] text-[var(--text)] flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950 relative overflow-x-hidden">
+    <div data-active-tab={activeTab} className="nirdhoom-field-app min-h-screen bg-[var(--bg-deep)] text-[var(--text)] flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950 relative overflow-x-hidden">
       <a href="#main-content" className="skip-link">Skip to main content</a>
       {/* Top Header */}
       <Header
