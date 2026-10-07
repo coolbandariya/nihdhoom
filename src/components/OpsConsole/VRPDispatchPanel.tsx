@@ -98,7 +98,7 @@ export const VRPDispatchPanel: React.FC<VRPDispatchPanelProps> = ({
   };
 
   return (
-    <div className="glass-panel p-4 flex flex-col gap-4">
+    <div className="glass-panel p-4 flex h-full flex-col gap-4">
       {/* Panel Header & Run Action */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
         <div>
