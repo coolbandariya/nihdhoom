@@ -316,3 +316,62 @@ html[data-theme="kisan"] .nirdhoom-field-app img{opacity:1!important;visibility:
     transform:translateX(-50%)!important;
   }
 }
+
+
+/* More menu: centered modal-style panel with a soft blurred page backdrop. */
+@media (min-width: 1024px){
+  html[data-theme="kisan"] .nirdhoom-field-app .field-more-backdrop{
+    position:fixed!important;
+    inset:72px 0 0!important;
+    z-index:40!important;
+    width:100%!important;
+    height:calc(100vh - 72px)!important;
+    min-height:0!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:rgba(15,23,42,.10)!important;
+    backdrop-filter:blur(5px)!important;
+    -webkit-backdrop-filter:blur(5px)!important;
+  }
+  html[data-theme="kisan"] .nirdhoom-field-app .field-more-menu{
+    position:fixed!important;
+    left:50%!important;
+    right:auto!important;
+    top:84px!important;
+    z-index:60!important;
+    width:min(680px,calc(100vw - 48px))!important;
+    max-height:calc(100vh - 108px)!important;
+    overflow:auto!important;
+    transform:translateX(-50%)!important;
+    padding:14px!important;
+    border:1px solid #E2E8F0!important;
+    border-radius:18px!important;
+    background:rgba(255,255,255,.98)!important;
+    box-shadow:0 24px 70px rgba(15,23,42,.18)!important;
+  }
+}
+html[data-theme="kisan"] .nirdhoom-field-app .field-more-close{
+  display:grid!important;
+  width:34px!important;
+  height:34px!important;
+  flex:0 0 34px!important;
+  place-items:center!important;
+  border:1px solid #E2E8F0!important;
+  border-radius:10px!important;
+  background:#F8FAFC!important;
+  color:#475569!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .field-more-close:hover{
+  background:#F1F5F9!important;
+  color:#0F172A!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .field-more-menu .grid{
+  gap:12px!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .field-more-menu .field-more-item{
+  min-height:68px!important;
+  padding:12px!important;
+  border:1px solid #E2E8F0!important;
+  border-radius:12px!important;
+}
