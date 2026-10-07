@@ -596,3 +596,21 @@ test('field-first UI kit and open-source interaction surfaces remain wired', () 
   assert.match(harvest, /field-first cards/);
   assert.match(auction, /field-first/);
 });
+
+
+test('consent withdrawal is server-authorized and records revocation', () => {
+  const migration = read('supabase/migrations/202610070001_nirdhoom_consent_withdrawal.sql');
+  const onboarding = read('src/components/FarmerOnboarding/FarmerOnboarding.tsx');
+  assert.match(migration, /revoke_farmer_network_consent/);
+  assert.match(migration, /profile_id = \(select auth\.uid\(\)\)/);
+  assert.match(migration, /revoked_at/);
+  assert.match(onboarding, /Withdraw consent/);
+  assert.match(onboarding, /consent_status: 'REVOKED'/);
+});
+
+test('operator surface distinguishes stale GPS readings', () => {
+  const source = read('src/components/FieldOperator/BalerPWA.tsx');
+  assert.match(source, /gpsStale/);
+  assert.match(source, /stale \$\{gpsAgeSeconds\}s ago/);
+  assert.match(source, /GPS reading is stale/);
+});
