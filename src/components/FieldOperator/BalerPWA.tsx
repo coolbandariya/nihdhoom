@@ -56,7 +56,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
         lng: position.coords.longitude,
         accuracy: position.coords.accuracy,
       };
-      setGpsState(next);
+      setGpsState({ ...next, recordedAt: position.timestamp || Date.now() });
       if (Date.now() - lastGpsWrite.current < 15000) return;
       lastGpsWrite.current = Date.now();
 
@@ -192,10 +192,20 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
     setEvidenceMessage('Evidence uploaded, hashed and linked to the field record.');
   };
 
-  const [gpsState, setGpsState] = useState<{ lat: number; lng: number; accuracy: number } | null>(null);
+  const [gpsState, setGpsState] = useState<{ lat: number; lng: number; accuracy: number; recordedAt: number } | null>(null);
   const [evidenceMessage, setEvidenceMessage] = useState('');
   const [queuedEvidence, setQueuedEvidence] = useState(0);
   const lastGpsWrite = useRef(0);
+  const [gpsNow, setGpsNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    if (!gpsState) return;
+    const timer = window.setInterval(() => setGpsNow(Date.now()), 5000);
+    return () => window.clearInterval(timer);
+  }, [gpsState?.recordedAt]);
+
+  const gpsAgeSeconds = gpsState ? Math.max(0, Math.round((gpsNow - gpsState.recordedAt) / 1000)) : null;
+  const gpsStale = gpsAgeSeconds !== null && gpsAgeSeconds > 60;
 
   useEffect(() => {
     const client = supabase;
@@ -515,9 +525,14 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                   </span>
                 </div>
                 <div className="mt-1 text-slate-400">
-                  {gpsState ? `GPS ±${Math.round(gpsState.accuracy)}m` : demoMode ? 'Demo GPS' : 'Waiting for device GPS permission'}
+                  {gpsState ? `GPS ±${Math.round(gpsState.accuracy)}m • ${gpsStale ? `stale ${gpsAgeSeconds}s ago` : `updated ${gpsAgeSeconds}s ago`}` : demoMode ? 'Demo GPS' : 'Waiting for device GPS permission'}
                   {!demoMode && queuedEvidence > 0 && ` • ${queuedEvidence} queued`}
                 </div>
+                {!demoMode && gpsStale && (
+                  <div role="status" className="mt-2 rounded-lg border border-amber-400/30 bg-amber-500/10 px-2.5 py-2 text-[11px] font-semibold text-amber-200">
+                    GPS reading is stale. Keep location enabled and wait for a fresh device reading before treating the position as current.
+                  </div>
+                )}
                 <label className="mt-2 flex cursor-pointer items-center justify-center rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 font-bold text-cyan-200 hover:bg-cyan-500/20">
                   Capture field photo
                   <input
