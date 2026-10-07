@@ -19,10 +19,10 @@ interface Props {
   onNavigate: (tab: string) => void;
 }
 
-const heroImage = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Paddy_fields_in_Batala%2C_Gurdaspur%2C_Punjab.jpg/1280px-Paddy_fields_in_Batala%2C_Gurdaspur%2C_Punjab.jpg';
-const farmImage = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Paddy_fields_in_Batala%2C_Gurdaspur%2C_Punjab.jpg/1280px-Paddy_fields_in_Batala%2C_Gurdaspur%2C_Punjab.jpg';
-const balerImage = 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Tractor_with_baler.jpg/1280px-Tractor_with_baler.jpg';
-const fleetImage = 'https://upload.wikimedia.org/wikipedia/commons/7/7e/Agriculture_in_India_tractor_farming_Punjab_preparing_field_for_a_wheat_crop_without_burning_previous_crop_stalk.jpg';
+const heroImage = '/images/punjab_farm_hero.jpg';
+const farmImage = '/images/punjab_farm_hero.jpg';
+const balerImage = '/images/baler_machine.jpg';
+const fleetImage = '/images/baling_fleet.jpg';
 const offtakeImage = '/images/offtake_facility.jpg';
 const satelliteImage = '/images/satellite_firms.jpg';
 const burningImage = '/images/parali_burning.jpg';
