@@ -1107,3 +1107,142 @@ html[data-theme="kisan"] .field-menu-button:hover {
     border-radius: 15px;
   }
 }
+
+
+/* =========================================================
+   NIRDHOOM PRODUCT POLISH — restrained field-operations UI
+   ========================================================= */
+html[data-theme="kisan"] {
+  --ui-ink: #183a27;
+  --ui-muted: #667568;
+  --ui-green: #2b7148;
+  --ui-green-dark: #205c39;
+  --ui-green-soft: #edf5ee;
+  --ui-wheat: #b77a1a;
+  --ui-wheat-soft: #faf2df;
+  --ui-border: rgba(37,82,50,.13);
+  --ui-shadow: 0 10px 28px rgba(35,74,44,.055);
+}
+
+html[data-theme="kisan"] body {
+  font-family: "DM Sans", "Inter", system-ui, sans-serif;
+  background: #f5f6ef;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-header {
+  background: rgba(255,255,255,.96);
+  border-bottom-color: var(--ui-border);
+  box-shadow: 0 6px 22px rgba(35,74,44,.055);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-header .field-nav-item {
+  min-height: 40px;
+  padding: .52rem .68rem;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  color: #637367;
+  font-size: 12px;
+  font-weight: 750;
+}
+html[data-theme="kisan"] .nirdhoom-field-header .field-nav-item:hover {
+  background: #f1f6ef;
+  color: var(--ui-ink);
+}
+html[data-theme="kisan"] .nirdhoom-field-header .field-nav-item.is-active {
+  background: var(--ui-green);
+  color: #fff;
+  box-shadow: 0 5px 14px rgba(43,113,72,.16);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-header .field-more-button {
+  min-height: 40px;
+  padding: .52rem .68rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 11px;
+  background: #fff;
+  color: #5f7164;
+  font-size: 12px;
+}
+html[data-theme="kisan"] .nirdhoom-field-header .field-more-button:hover,
+html[data-theme="kisan"] .nirdhoom-field-header .field-more-button.is-active {
+  background: var(--ui-green-soft);
+  border-color: rgba(43,113,72,.16);
+  color: var(--ui-green-dark);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-header .field-more-menu {
+  width: 410px;
+  border-color: var(--ui-border);
+  border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(30,63,40,.14);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app {
+  color: var(--ui-ink);
+}
+html[data-theme="kisan"] .nirdhoom-field-app .panel,
+html[data-theme="kisan"] .nirdhoom-field-app .buyer,
+html[data-theme="kisan"] .nirdhoom-field-app .metric,
+html[data-theme="kisan"] .nirdhoom-field-app .action-card,
+html[data-theme="kisan"] .nirdhoom-field-app .research-source {
+  border-color: var(--ui-border);
+  box-shadow: var(--ui-shadow);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(h1,h2,h3,h4) {
+  font-family: "Manrope", "DM Sans", system-ui, sans-serif;
+  letter-spacing: -.02em;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(button) {
+  font-family: "DM Sans", "Inter", system-ui, sans-serif;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(input,select,textarea) {
+  border-radius: 12px;
+  border-color: rgba(37,82,50,.16);
+  background: #fff;
+  color: var(--ui-ink);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(input,select,textarea):focus {
+  border-color: rgba(43,113,72,.42);
+  box-shadow: 0 0 0 3px rgba(43,113,72,.08);
+  outline: none;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(.primary,.field-button-primary) {
+  border-radius: 12px;
+  background: var(--ui-green);
+  box-shadow: 0 6px 16px rgba(43,113,72,.14);
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.primary,.field-button-primary):hover {
+  background: var(--ui-green-dark);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(.tag,.pill) {
+  border-radius: 999px;
+  font-size: 11px;
+}
+
+@media (max-width: 1270px) and (min-width: 1024px) {
+  html[data-theme="kisan"] .nirdhoom-field-header .field-nav-item {
+    padding-left: .52rem;
+    padding-right: .52rem;
+    font-size: 11px;
+  }
+  html[data-theme="kisan"] .nirdhoom-field-header .field-nav-item svg {
+    width: 15px;
+    height: 15px;
+  }
+}
+
+@media (max-width: 640px) {
+  html[data-theme="kisan"] .nirdhoom-field-header .group > span:first-child {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+}
