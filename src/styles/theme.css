@@ -83,3 +83,129 @@ html[data-theme="kisan"] .nirdhoom-field-app .market-status{padding:.25rem .5rem
 html[data-theme="kisan"] .nirdhoom-field-app .market-empty{display:grid;place-items:center;text-align:center;padding:2rem 1rem;border:1px dashed #CBD5E1;border-radius:10px;background:#F8FAFC} html[data-theme="kisan"] .nirdhoom-field-app .market-empty svg{width:28px;height:28px;margin-bottom:.55rem;color:#16A34A} html[data-theme="kisan"] .nirdhoom-field-app .market-empty strong{color:#0F172A;font-size:.82rem} html[data-theme="kisan"] .nirdhoom-field-app .market-empty p{max-width:22rem;margin:.3rem 0 0;color:#475569!important;font-size:.72rem;line-height:1.5}
 html[data-theme="kisan"] .nirdhoom-field-app .market-notice{padding:.75rem 1rem;border:1px solid #86EFAC;border-radius:10px;background:#F0FDF4;color:#166534;font-size:.75rem;font-weight:650} html[data-theme="kisan"] .nirdhoom-field-app .market-footnote{display:flex;align-items:center;gap:.45rem;color:#64748B;font-size:.7rem;line-height:1.5}
 @media(max-width:760px){html[data-theme="kisan"] .nirdhoom-field-app .market-hero-card{align-items:flex-start;flex-direction:column;padding:1.15rem}.market-primary-action{width:100%}.market-journey{grid-template-columns:1fr 1fr!important}.market-journey>i{display:none}.market-journey>div{padding:.35rem}.market-list-row{align-items:flex-start!important;flex-direction:column}.market-tonnage{white-space:normal!important}}
+
+
+/* =========================================================
+   SITE-WIDE LIGHT UI OVERRIDE
+   Keep the product bright, readable and operational — never
+   let legacy dark utility classes turn the interface muddy.
+   ========================================================= */
+html[data-theme="kisan"] .nirdhoom-field-app{
+  --bg-deep:#F8FAFC;
+  --bg-surface:#FFFFFF;
+  --text:#0F172A;
+  --text-muted:#475569;
+  --text-subtle:#64748B;
+  --line:#E2E8F0;
+  --green:#15803D;
+  background:#F8FAFC!important;
+  color:#0F172A!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app,
+html[data-theme="kisan"] .nirdhoom-field-app *{
+  border-color:#E2E8F0;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.bg-slate-950,.bg-slate-900,.bg-slate-800,.bg-slate-700,.bg-zinc-950,.bg-zinc-900,.bg-zinc-800,.bg-neutral-950,.bg-neutral-900,.bg-neutral-800,.bg-gray-950,.bg-gray-900,.bg-gray-800){
+  background:#FFFFFF!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.bg-slate-950\/60,.bg-slate-900\/60,.bg-slate-900\/70,.bg-slate-800\/60,.bg-slate-950\/70,.bg-black\/20,.bg-black\/30){
+  background:#FFFFFF!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.text-white,.text-slate-100,.text-slate-200,.text-slate-300,.text-gray-100,.text-gray-200,.text-zinc-100,.text-zinc-200){
+  color:#0F172A!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.text-slate-400,.text-slate-500,.text-gray-400,.text-gray-500,.text-zinc-400,.text-zinc-500,.text-neutral-400,.text-neutral-500){
+  color:#475569!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.border-slate-700,.border-slate-800,.border-slate-600,.border-zinc-700,.border-zinc-800,.border-gray-700,.border-gray-800,.border-neutral-700,.border-neutral-800){
+  border-color:#E2E8F0!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.divide-slate-700>*,.divide-slate-800>*,.divide-gray-700>*,.divide-zinc-700>*){
+  border-color:#E2E8F0!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.hover\:bg-slate-800:hover,.hover\:bg-slate-700:hover,.hover\:bg-zinc-800:hover,.hover\:bg-gray-800:hover){
+  background:#F1F5F9!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.hover\:bg-slate-900:hover,.hover\:bg-slate-950:hover){
+  background:#F8FAFC!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.text-cyan-300,.text-cyan-400,.text-sky-300,.text-sky-400,.text-blue-300,.text-blue-400,.text-purple-300,.text-purple-400,.text-violet-300,.text-violet-400,.text-fuchsia-300,.text-fuchsia-400){
+  color:#2563EB!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.bg-cyan-500,.bg-cyan-600,.bg-sky-500,.bg-sky-600,.bg-blue-500,.bg-blue-600,.bg-purple-500,.bg-purple-600,.bg-violet-500,.bg-violet-600){
+  background:#15803D!important;color:#FFFFFF!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.shadow-2xl,.shadow-xl,.shadow-lg,.shadow-md){
+  box-shadow:0 4px 16px rgba(15,23,42,.07)!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.rounded-xl,.rounded-2xl){
+  border-radius:12px;
+}
+
+/* Consistent workspace hero: bright editorial header instead of dark HUD */
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero{
+  display:grid;
+  grid-template-columns:minmax(0,1.45fr) minmax(260px,.55fr);
+  min-height:270px;
+  overflow:hidden;
+  margin-bottom:1.25rem;
+  border:1px solid #E2E8F0!important;
+  border-radius:18px;
+  background:#FFFFFF!important;
+  box-shadow:0 8px 28px rgba(15,23,42,.07)!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero-copy{padding:2rem 2rem 1.6rem}
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-eyebrow{
+  display:flex;align-items:center;gap:.55rem;
+  color:#15803D!important;font-size:.7rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-eyebrow-dot{width:7px;height:7px;border-radius:50%;background:#16A34A}
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-mode{
+  margin-left:.2rem;padding:.25rem .55rem;border:1px solid #BBF7D0;border-radius:999px;
+  background:#F0FDF4;color:#166534!important;letter-spacing:0;font-size:.62rem;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero h1{
+  margin:.55rem 0 0;color:#0F172A!important;font-size:clamp(1.75rem,3.3vw,2.7rem);line-height:1.08;font-weight:800;letter-spacing:-.035em;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero p{
+  max-width:760px;margin:.7rem 0 0;color:#475569!important;font-size:.98rem;line-height:1.65;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-action{
+  display:inline-flex;align-items:center;gap:.5rem;margin-top:1rem;padding:.7rem 1rem;border:1px solid #15803D!important;border-radius:10px;
+  background:#15803D!important;color:#FFFFFF!important;font-weight:750;
+  box-shadow:0 3px 10px rgba(21,128,61,.15);
+}
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-action:hover{background:#166534!important;transform:translateY(-1px)}
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero-image{position:relative;min-height:100%;overflow:hidden;background:#F1F5F9}
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero-image img{width:100%;height:100%;object-fit:cover}
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero-image-scrim{position:absolute;inset:0;background:linear-gradient(90deg,#FFFFFF 0%,rgba(255,255,255,.25) 22%,rgba(255,255,255,0) 55%)}
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-journey{
+  display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.25rem;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-journey-step{
+  display:inline-flex;align-items:center;gap:.45rem;padding:.45rem .65rem;border:1px solid #E2E8F0!important;border-radius:9px;
+  background:#F8FAFC!important;color:#475569!important;font-size:.72rem;font-weight:700;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-journey-step:hover{background:#F0FDF4!important;border-color:#86EFAC!important;color:#166534!important}
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-journey-step.is-current{background:#DCFCE7!important;border-color:#86EFAC!important;color:#166534!important}
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-journey-step.is-done{color:#166534!important}
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-journey-number{
+  display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#FFFFFF;border:1px solid #CBD5E1;color:#64748B;font-size:.62rem;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-journey-step.is-current .workspace-journey-number{background:#15803D;border-color:#15803D;color:#FFFFFF}
+html[data-theme="kisan"] .nirdhoom-field-app .field-main{background:#F8FAFC}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.glass-panel,.glass-panel-emerald,.glass-panel-amber,.glass-panel-crimson,.panel,.metric,.action-card,.buyer,.research-source){
+  background:#FFFFFF!important;color:#0F172A!important;border:1px solid #E2E8F0!important;border-radius:12px;box-shadow:0 4px 14px rgba(15,23,42,.05)!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.glass-panel,.glass-panel-emerald,.glass-panel-amber,.glass-panel-crimson,.panel,.metric,.action-card,.buyer) :where(.text-white,.text-slate-100,.text-slate-200,.text-slate-300){color:#0F172A!important}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.glass-panel,.glass-panel-emerald,.glass-panel-amber,.glass-panel-crimson,.panel,.metric,.action-card,.buyer) :where(.text-slate-400,.text-slate-500,.text-gray-400,.text-gray-500){color:#475569!important}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.field-mobile-panel,.field-more-menu){background:#FFFFFF!important;border-color:#E2E8F0!important;box-shadow:0 16px 40px rgba(15,23,42,.12)!important}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.field-more-item,.field-mobile-item){color:#334155!important}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.field-more-item:hover,.field-mobile-item:hover){background:#F0FDF4!important;color:#166534!important}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.field-more-item.is-active,.field-mobile-item.is-active){background:#DCFCE7!important;color:#166534!important}
+@media(max-width:900px){
+  html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero{grid-template-columns:1fr}
+  html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero-image{height:150px;min-height:150px}
+  html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero-image-scrim{background:linear-gradient(0deg,#FFFFFF 0%,rgba(255,255,255,0) 70%)}
+  html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero-copy{padding:1.35rem}
+}
