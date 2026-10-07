@@ -271,6 +271,7 @@ Vite prints the local development URL in the terminal.
 | `npm run audit` | Run the repository's static validation/audit script |
 | `npm run syntaxcheck` | Run the TypeScript project build check |
 | `npm test` | Run Node test files matching `tests/*.test.mjs` |
+| `npm run release:check` | Run syntax check, audit, tests and production build in sequence |
 
 A command existing in `package.json` does not mean its tests have passed. Run the commands against your current checkout and inspect the results.
 
@@ -338,6 +339,10 @@ python -m compileall -q services/dispatch-ortools
 ```
 
 For a release, record the commit SHA and CI run, and verify that all required checks completed successfully. A static audit or successful frontend build does not replace RLS, provider, device, or field-pilot tests.
+
+## Release readiness
+
+Use [docs/RELEASE-READINESS-2026-10-07.md](docs/RELEASE-READINESS-2026-10-07.md) as the current release gate and [docs/RLS-ROLE-MATRIX.md](docs/RLS-ROLE-MATRIX.md) for Supabase authorization testing. The repository currently contains 23 chronological Supabase migrations; see [docs/DATABASE-RELEASE-LEDGER.md](docs/DATABASE-RELEASE-LEDGER.md).
 
 ## Deployment notes
 
