@@ -38,6 +38,7 @@ const required = [
   'src/components/FarmerSurface/TelegramSimulator.tsx',
   'supabase/migrations/202610050001_nirdhoom_telegram_identity.sql',
   'supabase/migrations/202610050002_nirdhoom_telegram_webhook_idempotency.sql',
+  'supabase/migrations/202610070001_nirdhoom_consent_withdrawal.sql',
   'supabase/migrations/202609270001_nirdhoom_core.sql',
   'supabase/migrations/202609270002_nirdhoom_production.sql',
   'supabase/migrations/202609270003_nirdhoom_v6.sql',
@@ -80,6 +81,7 @@ const telegramWebhook = read('api/notify/telegram-webhook.ts');
 const telegramDedupe = read('supabase/migrations/202610050002_nirdhoom_telegram_webhook_idempotency.sql');
 const controller = read('src/state/useAppController.ts');
 const envExample = read('.env.example');
+const consentWithdrawal = read('supabase/migrations/202610070001_nirdhoom_consent_withdrawal.sql');
 
 const checks = [
   ['modular React entrypoint', entry.includes("import { App } from './App.tsx'") && entry.includes("import './index.css'")],
@@ -132,6 +134,8 @@ const checks = [
   ['field job action queue', read('src/components/FieldJobs/FieldJobBoard.tsx').includes('Needs action') && read('src/components/FieldJobs/FieldJobBoard.tsx').includes('Deadline risk')],
   ['live weather planning adapter', read('src/components/HarvestIntelligence/HarvestIntelligence.tsx').includes('/api/weather?field_id=') && read('api/weather.ts').includes('open-meteo')],
   ['explicit farmer consent flow', read('src/components/FarmerOnboarding/FarmerOnboarding.tsx').includes("consent_type: 'farmer_network'") && read('src/components/FarmerOnboarding/FarmerOnboarding.tsx').includes("consent_status: 'GRANTED'")],
+  ['consent withdrawal boundary', consentWithdrawal.includes('revoke_farmer_network_consent') && consentWithdrawal.includes('revoked_at') && consentWithdrawal.includes('grant execute on function public.revoke_farmer_network_consent() to authenticated')],
+  ['stale GPS is surfaced to operators', read('src/components/FieldOperator/BalerPWA.tsx').includes('gpsStale') && read('src/components/FieldOperator/BalerPWA.tsx').includes('GPS reading is stale')],
   ['settlement surfaces disclosed', read('src/components/FieldOperator/UpiSettlementModal.tsx').includes('no money movement') && !read('src/App.tsx').includes('Instant UPI Settlement')],
   ['farmer onboarding avoids financial identifiers', !read('src/components/FarmerOnboarding/FarmerOnboarding.tsx').includes('UPI ID (Preferred)')],
   ['demo data is opt-in', controller.includes("VITE_NIRDHOOM_DEMO_MODE === 'true'") && controller.includes('useState<Field[]>(DEMO_MODE ? demoSeed.fields : [])') && controller.includes('useState<Machine[]>(DEMO_MODE ? demoSeed.machines : [])') && envExample.includes('VITE_NIRDHOOM_DEMO_MODE=false')],
