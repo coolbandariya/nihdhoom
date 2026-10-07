@@ -20,6 +20,13 @@ V7.4 is a repository-hardening release. It does not claim that external producti
 - Telegram outbound notifications and IVR routes require dispatcher/admin authentication.
 - Real payment movement remains explicitly disabled until a real provider adapter and reconciliation contract are implemented.
 
+## Completed repository hardening in the latest pass
+
+- Self-service farmer operational-consent withdrawal is now represented by a server-authorized database boundary and UI control.
+- Operator GPS telemetry now records the device timestamp and surfaces readings older than 60 seconds as stale.
+- The migration ledger now includes Telegram, integrity-hardening, quantity-invariant and consent-withdrawal migrations.
+- A controlled pilot runbook is included at `docs/CONTROLLED-PILOT-RUNBOOK.md`.
+
 ## Required before a real pilot
 
 1. Apply all Supabase migrations in order against the dedicated production project.
