@@ -1246,3 +1246,375 @@ html[data-theme="kisan"] .nirdhoom-field-app :where(.tag,.pill) {
     border-radius: 12px;
   }
 }
+
+
+/* =========================================================
+   NIRDHOOM — GLOBAL PRODUCT FINISHING PASS
+   One visual system across every workspace.
+   ========================================================= */
+
+html[data-theme="kisan"] .nirdhoom-field-app {
+  --finish-ink: #18372a;
+  --finish-muted: #66766b;
+  --finish-subtle: #87948b;
+  --finish-green: #28734a;
+  --finish-green-dark: #1e5b3a;
+  --finish-green-soft: #edf5ee;
+  --finish-wheat: #b87818;
+  --finish-wheat-soft: #fbf3e2;
+  --finish-border: rgba(30, 78, 49, .12);
+  --finish-border-strong: rgba(30, 78, 49, .19);
+  --finish-shadow: 0 10px 30px rgba(27, 64, 42, .065);
+  --finish-shadow-hover: 0 16px 38px rgba(27, 64, 42, .10);
+  color: var(--finish-ink);
+  font-family: "DM Sans", "Inter", system-ui, sans-serif;
+}
+
+/* Page rhythm */
+html[data-theme="kisan"] .nirdhoom-field-app .field-main {
+  max-width: 1480px;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .field-main > * {
+  animation: nirdhoom-enter .35s var(--ease) both;
+}
+@keyframes nirdhoom-enter {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Workspace headings and section rhythm */
+html[data-theme="kisan"] .nirdhoom-field-app :where(h1,h2,h3,h4) {
+  font-family: "Manrope", "DM Sans", system-ui, sans-serif;
+  color: var(--finish-ink);
+  letter-spacing: -.025em;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.workspace-header, .page-header, .section-header) {
+  margin-bottom: 18px;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.workspace-header h1, .page-header h1) {
+  font-weight: 800;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.workspace-header p, .page-header p, .section-header p) {
+  color: var(--finish-muted);
+}
+
+/* The common panel/card language */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .glass-panel,
+  .panel,
+  .metric,
+  .buyer,
+  .action-card,
+  .research-source,
+  .job-card,
+  .field-card,
+  .detail-card,
+  .stat-card,
+  .info-card,
+  .workspace-card,
+  .surface-card
+) {
+  background: rgba(255,255,255,.94);
+  border: 1px solid var(--finish-border);
+  border-radius: 16px;
+  box-shadow: var(--finish-shadow);
+  color: var(--finish-ink);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .glass-panel,
+  .panel,
+  .metric,
+  .buyer,
+  .action-card,
+  .research-source,
+  .job-card,
+  .field-card,
+  .detail-card,
+  .stat-card,
+  .info-card,
+  .workspace-card,
+  .surface-card
+):hover {
+  border-color: var(--finish-border-strong);
+}
+
+/* Reduce the “stack of boxes” feeling in nested cards */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .glass-panel .glass-panel,
+  .panel .panel,
+  .card .card
+) {
+  box-shadow: none;
+}
+
+/* Common dark Tailwind surfaces become calm product surfaces */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .bg-slate-950,
+  .bg-slate-950\/95,
+  .bg-slate-950\/90,
+  .bg-slate-950\/80,
+  .bg-slate-950\/70,
+  .bg-slate-900,
+  .bg-slate-900\/80,
+  .bg-slate-900\/70,
+  .bg-slate-900\/60
+) {
+  background: #fbfcf9 !important;
+  color: var(--finish-ink) !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .border-slate-800,
+  .border-slate-700,
+  .border-slate-600
+) {
+  border-color: var(--finish-border) !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .text-white,
+  .text-slate-100,
+  .text-slate-200
+) {
+  color: var(--finish-ink) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .text-slate-300,
+  .text-slate-400
+) {
+  color: var(--finish-muted) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .text-slate-500 {
+  color: var(--finish-subtle) !important;
+}
+
+/* Buttons — one consistent hierarchy */
+html[data-theme="kisan"] .nirdhoom-field-app :where(button) {
+  border-radius: 11px;
+  transition:
+    transform .18s var(--ease),
+    box-shadow .18s ease,
+    background-color .18s ease,
+    border-color .18s ease,
+    color .18s ease;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(button:not(:disabled):hover) {
+  transform: translateY(-1px);
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(button:disabled) {
+  cursor: not-allowed;
+  opacity: .55;
+  transform: none;
+}
+
+/* Primary green actions */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .bg-emerald-600,
+  .bg-emerald-500
+) {
+  background: var(--finish-green) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .bg-emerald-600:hover,
+  .bg-emerald-500:hover
+) {
+  background: var(--finish-green-dark) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .text-emerald-300,
+  .text-emerald-400,
+  .text-emerald-500
+) {
+  color: var(--finish-green) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .border-emerald-500,
+  .border-emerald-500\/30,
+  .border-emerald-500\/20
+) {
+  border-color: rgba(40,115,74,.18) !important;
+}
+
+/* Saffron is a secondary signal, not the whole interface */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .bg-amber-600,
+  .bg-amber-500
+) {
+  background: var(--finish-wheat) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .text-amber-300,
+  .text-amber-400,
+  .text-amber-500
+) {
+  color: #9a6718 !important;
+}
+
+/* Inputs */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea
+) {
+  border: 1px solid rgba(35,78,50,.14);
+  background: #fff;
+  color: var(--finish-ink);
+  border-radius: 11px;
+  box-shadow: 0 1px 1px rgba(20,50,30,.02);
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea
+):focus {
+  border-color: rgba(40,115,74,.45);
+  box-shadow: 0 0 0 3px rgba(40,115,74,.09);
+  outline: none;
+}
+
+/* Tags, badges and status pills */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .badge,
+  .pill,
+  .tag,
+  .live,
+  [class*="rounded-full"][class*="text-xs"]
+) {
+  border-radius: 999px;
+  font-weight: 750;
+  letter-spacing: .01em;
+}
+
+/* Tables */
+html[data-theme="kisan"] .nirdhoom-field-app :where(table) {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border: 1px solid var(--finish-border);
+  border-radius: 14px;
+  background: #fff;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(thead th) {
+  background: #f5f8f3;
+  color: #53665a;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .045em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--finish-border);
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(tbody tr) {
+  transition: background-color .16s ease;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(tbody tr:hover) {
+  background: #f8fbf7;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(td) {
+  border-bottom: 1px solid rgba(35,78,50,.07);
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(tbody tr:last-child td) {
+  border-bottom: 0;
+}
+
+/* Links should feel intentional */
+html[data-theme="kisan"] .nirdhoom-field-app :where(a) {
+  text-decoration-thickness: 1px;
+}
+
+/* Common dividers */
+html[data-theme="kisan"] .nirdhoom-field-app :where(hr) {
+  border: 0;
+  border-top: 1px solid var(--finish-border);
+}
+
+/* Scrollbars */
+html[data-theme="kisan"] .nirdhoom-field-app ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+html[data-theme="kisan"] .nirdhoom-field-app ::-webkit-scrollbar-track {
+  background: transparent;
+}
+html[data-theme="kisan"] .nirdhoom-field-app ::-webkit-scrollbar-thumb {
+  background: #c7d2c9;
+  border-radius: 999px;
+}
+html[data-theme="kisan"] .nirdhoom-field-app ::-webkit-scrollbar-thumb:hover {
+  background: #aebcaf;
+}
+
+/* Footer: make it belong to the same product */
+html[data-theme="kisan"] .nirdhoom-field-app + footer,
+html[data-theme="kisan"] footer {
+  background: rgba(255,255,255,.88) !important;
+  border-top: 1px solid var(--finish-border) !important;
+  color: var(--finish-muted) !important;
+  backdrop-filter: blur(12px);
+}
+html[data-theme="kisan"] footer :where(.text-white, .text-slate-100) {
+  color: var(--finish-ink) !important;
+}
+html[data-theme="kisan"] footer :where(.text-slate-400, .text-slate-500) {
+  color: var(--finish-muted) !important;
+}
+
+/* Toasts / floating notifications */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  [class*="fixed"][class*="rounded"],
+  [class*="fixed"][class*="shadow"]
+) {
+  border-color: var(--finish-border) !important;
+  box-shadow: 0 18px 45px rgba(25,60,39,.14);
+}
+
+/* Responsive finishing */
+@media (max-width: 900px) {
+  html[data-theme="kisan"] .nirdhoom-field-app :where(
+    .glass-panel,
+    .panel,
+    .metric,
+    .buyer,
+    .action-card,
+    .research-source,
+    .job-card,
+    .field-card,
+    .detail-card,
+    .stat-card,
+    .info-card,
+    .workspace-card,
+    .surface-card
+  ) {
+    border-radius: 14px;
+  }
+}
+@media (max-width: 560px) {
+  html[data-theme="kisan"] .nirdhoom-field-app {
+    --finish-shadow: 0 7px 22px rgba(27,64,42,.055);
+  }
+  html[data-theme="kisan"] .nirdhoom-field-app :where(
+    .glass-panel,
+    .panel,
+    .metric,
+    .buyer,
+    .action-card,
+    .research-source,
+    .job-card,
+    .field-card,
+    .detail-card,
+    .stat-card,
+    .info-card,
+    .workspace-card,
+    .surface-card
+  ) {
+    border-radius: 13px;
+  }
+}
+
+/* Keep motion tasteful and accessible */
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="kisan"] .nirdhoom-field-app .field-main > * {
+    animation: none;
+  }
+}
