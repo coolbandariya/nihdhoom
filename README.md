@@ -357,9 +357,9 @@ Do not assume that a Vercel deployment automatically deploys the Python dispatch
 
 The repository is a prototype/integration foundation. The following still require implementation, configuration, or verification before a controlled pilot:
 
-- Real phone OTP onboarding, farmer consent, and consent withdrawal.
+- Real phone OTP onboarding and consent capture are implemented; consent withdrawal is now self-service. Real deployed-provider verification is still required.
 - Authoritative cadastral/Khasra boundary source and field-level provenance.
-- Production GPS/device validation and stale-location handling.
+- Production GPS/device validation remains a pilot gate; the operator UI now surfaces stale readings.
 - Private evidence upload, server-side content validation, and trusted hashing.
 - Dispatch service deployment and validation of returned assignments.
 - Real service-area capacity, booking concurrency, cancellation, and escalation rules.
@@ -373,7 +373,7 @@ The repository is a prototype/integration foundation. The following still requir
 
 ### Payment scope
 
-**Real payment/payout integration is intentionally excluded from the current scope.** Payment screens or ledger concepts are demonstration-only. Do not add provider credentials or describe a UI action as settlement. See [docs/NON-PAYMENT-RELEASE-SCOPE.md](docs/NON-PAYMENT-RELEASE-SCOPE.md).
+**Real payment/payout integration is intentionally excluded from the current scope.** Payment screens or ledger concepts are demonstration-only. Do not add provider credentials or describe a UI action as settlement. See [docs/NON-PAYMENT-RELEASE-SCOPE.md](docs/NON-PAYMENT-RELEASE-SCOPE.md) and [docs/CONTROLLED-PILOT-RUNBOOK.md](docs/CONTROLLED-PILOT-RUNBOOK.md).
 
 ### Pilot readiness
 
