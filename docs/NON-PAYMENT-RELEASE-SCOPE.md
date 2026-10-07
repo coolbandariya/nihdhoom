@@ -12,7 +12,7 @@ This scope explicitly excludes integrating a real payment or payout provider. Th
 
 ### Identity, consent, and access
 - [ ] Verify phone OTP in the deployed Supabase project.
-- [ ] Persist explicit farmer consent with timestamp, policy/version, and withdrawal path.
+- [x] Persist explicit farmer consent with timestamp, policy/version, and self-service withdrawal path. [Repository implementation; deployed-provider verification remains required.]
 - [ ] Confirm self-service profile changes cannot grant privileged roles.
 - [ ] Exercise RLS with separate farmer, operator, dispatcher, verifier, buyer, and admin accounts.
 - [ ] Verify users cannot access another farmer's fields, bookings, evidence, or conversations.
@@ -26,7 +26,7 @@ This scope explicitly excludes integrating a real payment or payout provider. Th
 
 ### Operator, GPS, and evidence
 - [ ] Verify operator identity and assignment before accepting operational updates.
-- [ ] Record GPS timestamp, accuracy, and source; display stale/offline readings as such.
+- [x] Record GPS timestamp, accuracy, and source; display stale/offline readings as such. [Repository implementation; real-device validation remains required.]
 - [ ] Validate evidence file size, MIME type, and actual content; use private storage.
 - [ ] Compute integrity hashes from trusted uploaded bytes, not a client-provided digest.
 - [ ] Enforce field/booking assignment authorization for evidence writes.
