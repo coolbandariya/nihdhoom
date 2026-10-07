@@ -4,7 +4,7 @@
 This document is the source of truth for the current Supabase migration chain. It replaces older deployment notes that described a previous V6/V7 split.
 
 ## Migration order
-Migrations are applied in filename order:
+Migrations are applied in filename order. The repository currently contains **20 migrations**; the two 2026-10-06 hardening migrations are part of the release chain and must not be omitted.
 
 1. `202609270001_nirdhoom_core.sql` — core identities, fields, bookings and RLS foundations.
 2. `202609270002_nirdhoom_production.sql` — production roles, integrity triggers and operational protections.
@@ -24,6 +24,11 @@ Migrations are applied in filename order:
 16. `202610020012_nirdhoom_residue_pool_verification_gate.sql` — verified-residue gate for pooling.
 17. `202610040001_machine_privacy_and_pool_member_visibility.sql` — machine privacy and pool-member visibility.
 18. `202610040002_revoke_trigger_function_execute.sql` — revoke direct execution of trigger-only functions.
+19. `202610050001_nirdhoom_telegram_identity.sql` — Telegram identity/linking primitives.
+20. `202610050002_nirdhoom_telegram_webhook_idempotency.sql` — webhook replay protection.
+21. `202610050003_nirdhoom_telegram_identity_live_repair.sql` — Telegram identity repair path.
+22. `20261006_nirdhoom_integrity_hardening.sql` — SECURITY DEFINER search-path hardening and residue allocation invariant.
+23. `20261006_nirdhoom_residue_quantity_invariants.sql` — residue quantity consistency constraints.
 
 ## Release rules
 - Never reorder or rename an already-applied migration.
@@ -35,7 +40,7 @@ Migrations are applied in filename order:
 - Before a production release, record the Supabase migration status and run the RLS/integrity test suite.
 
 ## Verification checklist
-- [ ] All 18 migrations are present in the repository.
+- [ ] All 23 migrations listed above are present in the repository.
 - [ ] Supabase migration history matches this order.
 - [ ] RLS is enabled on every tenant/business table.
 - [ ] Role escalation is blocked.
