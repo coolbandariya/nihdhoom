@@ -302,3 +302,6 @@ html[data-theme="kisan"] .nirdhoom-field-app :where(img.rounded-full){
     min-height:180px;
   }
 }
+
+/* Keep all product imagery fully visible across workspaces. */
+html[data-theme="kisan"] .nirdhoom-field-app img{opacity:1!important;visibility:visible!important;}
