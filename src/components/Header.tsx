@@ -41,14 +41,7 @@ const secondaryNav: NavItem[] = [
   { id: 'BALER_OPERATOR', label: 'Machine Worker', icon: Smartphone, description: 'Tools for the person driving the machine' },
   { id: 'FARMER_SURFACE', label: 'Telegram Help', icon: MessageSquare, description: 'Get updates and help on Telegram' },
   { id: 'FARMER_KYC', label: 'My Profile', icon: UserCheck, description: 'Phone verification and farmer consent' },
-  { id: 'OFFTAKE_AUCTION', label: 'Buyers', icon: TrendingUp, description: 'See buyer needs for collected parali' },
-  { id: 'CARBON_MARKET', label: 'Carbon (Advanced)', icon: CircleDollarSign, description: 'Advanced carbon evidence workspace' },
-  { id: 'AGENTIC_CONSOLE', label: 'AI Helper (Advanced)', icon: Bot, description: 'Advanced assistant for operations' },
-  { id: 'DIGITAL_TWIN_3D', label: '3D Field View', icon: Activity, description: 'Advanced 3D view of fields' },
-  { id: 'MACHINERY_3D', label: '3D Machine View', icon: Activity, description: 'Advanced 3D machine view' },
   { id: 'DEMO_RUNNER', label: 'How NIRDHOOM Works', icon: Sparkles, description: 'See the complete journey step by step' },
-  { id: 'COMPETITION_CENTER', label: 'Competition Pitch', icon: Trophy, description: 'RIDE and WarriorHacks demo and submission guide' },
-  { id: 'JUDGE_DEFENSE', label: 'Product Q&A', icon: HelpCircle, description: 'Questions and answers about the product' },
 ];
 
 export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
