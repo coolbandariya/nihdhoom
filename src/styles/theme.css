@@ -2181,3 +2181,230 @@ html[data-theme="kisan"] .nirdhoom-field-app .field-main {
     box-shadow: 0 5px 18px rgba(35,73,48,.05) !important;
   }
 }
+
+
+/* =========================================================
+   NIRDHOOM PRODUCT SYSTEM — final light visual direction
+   One product, one palette, subtle contextual accents.
+   ========================================================= */
+
+html[data-theme="kisan"] body {
+  background: #f6f8f3 !important;
+  color: #18372a !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app {
+  --n-bg: #f6f8f3;
+  --n-surface: #ffffff;
+  --n-surface-soft: #f0f4ee;
+  --n-text: #18372a;
+  --n-muted: #68766d;
+  --n-border: #dfe7dd;
+  --n-primary: #2f6b46;
+  --n-primary-dark: #245638;
+  --n-wheat: #b67a25;
+  --n-wheat-soft: #faf2e2;
+  --n-teal: #39736b;
+  background: #f6f8f3 !important;
+  color: #18372a !important;
+}
+
+/* Contextual accents are intentionally restrained — never a new theme per tab. */
+html[data-theme="kisan"] .nirdhoom-field-app[data-active-tab="FARMER_ONBOARDING"],
+html[data-theme="kisan"] .nirdhoom-field-app[data-active-tab="HARVEST_INTELLIGENCE"],
+html[data-theme="kisan"] .nirdhoom-field-app[data-active-tab="COMPETITION_CENTER"],
+html[data-theme="kisan"] .nirdhoom-field-app[data-active-tab="DEMO_RUNNER"] {
+  --tab-accent: #b67a25;
+  --tab-accent-strong: #8d5d18;
+  --tab-soft: #faf2e2;
+  --tab-line: #ead8b7;
+}
+html[data-theme="kisan"] .nirdhoom-field-app[data-active-tab="OPS_CONSOLE"],
+html[data-theme="kisan"] .nirdhoom-field-app[data-active-tab="BALER_OPERATOR"],
+html[data-theme="kisan"] .nirdhoom-field-app[data-active-tab="AGENTIC_CONSOLE"],
+html[data-theme="kisan"] .nirdhoom-field-app[data-active-tab="DIGITAL_TWIN_3D"],
+html[data-theme="kisan"] .nirdhoom-field-app[data-active-tab="MACHINERY_3D"] {
+  --tab-accent: #39736b;
+  --tab-accent-strong: #2d5d57;
+  --tab-soft: #eaf3f1;
+  --tab-line: #cfe2dd;
+}
+html[data-theme="kisan"] .nirdhoom-field-app[data-active-tab="SATELLITE_AUDIT"],
+html[data-theme="kisan"] .nirdhoom-field-app[data-active-tab="FIELD_PROVENANCE"],
+html[data-theme="kisan"] .nirdhoom-field-app[data-active-tab="FARMER_KYC"],
+html[data-theme="kisan"] .nirdhoom-field-app[data-active-tab="FARMER_SURFACE"] {
+  --tab-accent: #52745b;
+  --tab-accent-strong: #3f5f48;
+  --tab-soft: #edf3ec;
+  --tab-line: #d3dfd1;
+}
+
+/* Remove visual noise from old cyber surfaces. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .glass-panel,.glass-panel-emerald,.glass-panel-amber,.glass-panel-crimson,
+  .card,.panel,.metric,.action-card,.research-source,.job-card,.field-card,
+  .detail-card,.stat-card,.info-card,.workspace-card,.surface-card,
+  .dashboard-card,.section-card,.module-card,.content-card
+) {
+  background: #fff !important;
+  color: #18372a;
+  border-color: var(--tab-line, #dfe7dd) !important;
+  box-shadow: 0 8px 24px rgba(31,67,43,.055) !important;
+  backdrop-filter: none !important;
+}
+
+/* Tailwind legacy dark fills: convert to white/soft paper, not neon. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  [class*="bg-slate-950"],[class*="bg-slate-900"],[class*="bg-slate-800"],
+  [class*="bg-gray-950"],[class*="bg-gray-900"],[class*="bg-gray-800"],
+  [class*="bg-zinc-950"],[class*="bg-zinc-900"],[class*="bg-zinc-800"],
+  [class*="bg-neutral-950"],[class*="bg-neutral-900"]
+):not(canvas):not(svg) {
+  background-color: #fff !important;
+  background-image: none !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  [class*="bg-slate-800"],[class*="bg-gray-800"],[class*="bg-zinc-800"]
+):not(canvas):not(svg) {
+  background-color: #f3f6f1 !important;
+}
+
+/* Dark text utilities become readable product text. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  [class~="text-white"],[class*="text-slate-100"],[class*="text-slate-200"],
+  [class*="text-gray-100"],[class*="text-gray-200"],[class*="text-zinc-100"],
+  [class*="text-zinc-200"]
+) { color: #18372a !important; }
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  [class*="text-slate-300"],[class*="text-slate-400"],[class*="text-gray-300"],
+  [class*="text-gray-400"],[class*="text-zinc-300"],[class*="text-zinc-400"]
+) { color: #68766d !important; }
+
+/* Replace rainbow HUD accents with the contextual accent. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  [class*="text-cyan-"],[class*="text-sky-"],[class*="text-blue-"],
+  [class*="text-purple-"],[class*="text-violet-"],[class*="text-fuchsia-"],
+  [class*="text-pink-"]
+) { color: var(--tab-accent-strong, #2f6b46) !important; }
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  [class*="border-cyan-"],[class*="border-sky-"],[class*="border-blue-"],
+  [class*="border-purple-"],[class*="border-violet-"],[class*="border-fuchsia-"]
+) { border-color: var(--tab-line, #dfe7dd) !important; }
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  [class*="bg-cyan-"],[class*="bg-sky-"],[class*="bg-blue-"],
+  [class*="bg-purple-"],[class*="bg-violet-"],[class*="bg-fuchsia-"]
+):not(canvas):not(svg) { background-color: var(--tab-soft, #edf3ec) !important; }
+
+/* Status colours stay semantic, but muted. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  [class*="bg-emerald-"],[class*="bg-green-"]
+):not(canvas):not(svg) { background-color: #eaf3ec !important; }
+html[data-theme="kisan"] .nirdhoom-field-app :where([class*="bg-amber-"]):not(canvas):not(svg) { background-color: #faf2e2 !important; }
+html[data-theme="kisan"] .nirdhoom-field-app :where([class*="bg-red-"]):not(canvas):not(svg) { background-color: #faece9 !important; }
+
+/* Hero photography: editorial, bright, consistent. */
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero-image {
+  background: #e9eee7 !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero-image img {
+  filter: saturate(.9) contrast(1.02) brightness(1.04) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero-image-scrim {
+  background: linear-gradient(90deg, rgba(247,249,245,.08), rgba(247,249,245,.0)) !important;
+}
+
+/* Forms. */
+html[data-theme="kisan"] .nirdhoom-field-app input,
+html[data-theme="kisan"] .nirdhoom-field-app select,
+html[data-theme="kisan"] .nirdhoom-field-app textarea {
+  background: #fff !important;
+  color: #18372a !important;
+  border-color: #dfe7dd !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app input::placeholder,
+html[data-theme="kisan"] .nirdhoom-field-app textarea::placeholder { color: #96a199 !important; }
+
+/* Navigation should remain the stable product anchor. */
+html[data-theme="kisan"] .nirdhoom-field-header {
+  background: rgba(255,255,255,.94) !important;
+  border-color: #dfe7dd !important;
+  box-shadow: 0 4px 18px rgba(31,67,43,.055);
+  backdrop-filter: blur(14px);
+}
+html[data-theme="kisan"] .nirdhoom-field-app .field-nav-item.is-active,
+html[data-theme="kisan"] .nirdhoom-field-app .field-more-button.is-active {
+  color: #245638 !important;
+  background: #edf4ee !important;
+}
+
+/* Telemetry — logistics/product card, not sci-fi HUD. */
+html[data-theme="kisan"] .nirdhoom-field-app .telemetry-card {
+  border-color: #dfe7dd !important;
+  background: #fff !important;
+  color: #18372a !important;
+  box-shadow: 0 18px 50px rgba(24,55,42,.14) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .telemetry-event-icon {
+  background: var(--tab-soft, #edf3ec) !important;
+  border-color: var(--tab-line, #d3dfd1) !important;
+  color: var(--tab-accent-strong, #2f6b46) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .telemetry-badge {
+  background: var(--tab-soft, #edf3ec) !important;
+  border-color: var(--tab-line, #d3dfd1) !important;
+  color: var(--tab-accent-strong, #2f6b46) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .telemetry-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #3b8a59;
+  box-shadow: 0 0 0 4px #eaf3ec;
+}
+
+/* Maps remain map-like; controls become light product controls. */
+html[data-theme="kisan"] .nirdhoom-field-app .leaflet-container {
+  background: #e7eee7 !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .leaflet-control-zoom a {
+  background: #fff !important;
+  color: #31523f !important;
+  border-color: #dfe7dd !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .leaflet-popup-content-wrapper {
+  background: #fff !important;
+  color: #18372a !important;
+  border-color: #dfe7dd !important;
+  box-shadow: 0 12px 30px rgba(31,67,43,.12) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .leaflet-popup-tip { background: #fff !important; }
+
+/* Better image framing across cards. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(.image-card,.photo-card,.media-card,.photo-band,.image-frame) {
+  overflow: hidden;
+  border-radius: 18px;
+  background: #edf2eb;
+  border: 1px solid #dfe7dd;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.image-card img,.photo-card img,.media-card img,.photo-band img,.image-frame img) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(.9) contrast(1.02) brightness(1.03);
+  transition: transform .4s ease, filter .4s ease;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.image-card:hover img,.photo-card:hover img,.media-card:hover img,.photo-band:hover img,.image-frame:hover img) {
+  transform: scale(1.025);
+  filter: saturate(1) contrast(1.03) brightness(1.03);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="kisan"] .nirdhoom-field-app *,
+  html[data-theme="kisan"] .nirdhoom-field-app *::before,
+  html[data-theme="kisan"] .nirdhoom-field-app *::after {
+    animation-duration: .001ms !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
