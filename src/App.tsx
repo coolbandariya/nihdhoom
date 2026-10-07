@@ -315,7 +315,6 @@ export function App() {
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        openPitchDrawer={() => setIsPitchDrawerOpen(true)}
         demoMode={demoMode}
       />
 
