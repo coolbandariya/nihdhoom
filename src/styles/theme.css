@@ -499,3 +499,113 @@ html[data-theme="kisan"] .nirdhoom-field-app :where(.leaflet-container){
   }
 }
 \n
+
+/* =========================================================
+   TRACK MACHINE — full-page bright map workspace
+   ========================================================= */
+html[data-theme="kisan"] .nirdhoom-field-app{
+  --ops-page:#F8FAFC;
+}
+
+/* Remove legacy dark/HUD mode controls from the map workspace. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  button[aria-label*="Dark" i],
+  button[title*="Dark" i],
+  [role="button"][aria-label*="Dark" i],
+  [role="button"][title*="Dark" i],
+  button[aria-label*="Globe" i],
+  button[title*="Globe" i],
+  [role="button"][aria-label*="Globe" i],
+  [role="button"][title*="Globe" i]
+){
+  display:none!important;
+}
+
+/* Track-machine workspace should use the available browser width. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .ops-console,
+  .ops-workspace,
+  .track-machine,
+  .tracking-workspace,
+  .machine-tracking,
+  .machine-map-page
+){
+  width:100%!important;
+  max-width:none!important;
+  min-width:0!important;
+  margin-left:0!important;
+  margin-right:0!important;
+}
+
+/* Make map sections edge-to-edge inside the application shell. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .ops-console,
+  .ops-workspace,
+  .track-machine,
+  .tracking-workspace,
+  .machine-tracking,
+  .machine-map-page
+) :where(.map-section,.map-workspace,.map-panel,.tracking-map,.ops-map){
+  width:100%!important;
+  max-width:none!important;
+}
+
+/* A map-first viewport: generous height, clean white frame, no HUD styling. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .tracking-map,
+  .ops-map,
+  .field-map,
+  .map-workspace
+) :where(.leaflet-container){
+  width:100%!important;
+  height:clamp(520px,72vh,820px)!important;
+  min-height:520px!important;
+  border-radius:16px!important;
+  border:1px solid #CBD5E1!important;
+  background:#EAF2E8!important;
+  box-shadow:0 10px 30px rgba(15,23,42,.09)!important;
+}
+
+/* Keep descriptive content directly below the map, readable and full width. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .tracking-map,
+  .ops-map,
+  .field-map,
+  .map-workspace
+) + :where(.panel,.glass-panel,.map-details,.tracking-details,.machine-details){
+  width:100%!important;
+  max-width:none!important;
+  margin-top:16px!important;
+  background:#FFFFFF!important;
+  color:#0F172A!important;
+  border:1px solid #E2E8F0!important;
+  border-radius:14px!important;
+  box-shadow:0 4px 16px rgba(15,23,42,.06)!important;
+}
+
+/* Eliminate accidental dark overlays sitting above real map tiles. */
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .tracking-map .overlay,
+  .ops-map .overlay,
+  .field-map .overlay,
+  .map-workspace .overlay
+){
+  background:rgba(255,255,255,.94)!important;
+  color:#0F172A!important;
+  border-color:#E2E8F0!important;
+}
+
+/* Mobile: preserve a strong map viewport without horizontal overflow. */
+@media(max-width:760px){
+  html[data-theme="kisan"] .nirdhoom-field-app :where(
+    .tracking-map,
+    .ops-map,
+    .field-map,
+    .map-workspace
+  ) :where(.leaflet-container){
+    height:58vh!important;
+    min-height:360px!important;
+    border-radius:12px!important;
+  }
+}
+\n
