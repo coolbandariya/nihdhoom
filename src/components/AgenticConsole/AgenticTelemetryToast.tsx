@@ -85,23 +85,23 @@ export const AgenticTelemetryToast: React.FC<{
   if (!isVisible) return null;
 
   return (
-    <aside aria-label="Real-time Telemetry Stream" className="fixed bottom-5 right-5 z-40 max-w-sm w-full px-3 sm:px-0">
-      <div className="glass-panel p-3.5 rounded-2xl border border-cyan-500/30 shadow-2xl backdrop-blur-xl bg-slate-950/85">
+    <aside aria-label="Real-time Telemetry Stream" className="nirdhoom-telemetry fixed bottom-5 right-5 z-40 max-w-sm w-full px-3 sm:px-0">
+      <div className="telemetry-card glass-panel p-3.5 rounded-2xl border shadow-xl backdrop-blur-xl">
         <div className="flex items-center justify-between pb-2 border-b border-white/5 mb-2.5">
           <div className="flex items-center gap-2">
             <span className="badge--dot" />
-            <span className="text-[11px] font-mono uppercase tracking-wider text-cyan-400 font-bold">
+            <span className="text-[11px] font-mono uppercase tracking-wider font-bold telemetry-kicker">
               Telemetry Stream
             </span>
-            <span className="text-[10px] text-slate-500 font-mono">
+            <span className="text-[10px] font-mono telemetry-muted">
               {demoMode ? `(${currentIndex + 1}/${STREAM_EVENTS.length})` : '(live)'}
             </span>
           </div>
 
-          <div className="flex items-center gap-1 text-slate-400">
+          <div className="flex items-center gap-1 telemetry-actions">
             <button
               onClick={() => setIsMinimized(!isMinimized)}
-              className="p-1 hover:text-white rounded hover:bg-slate-800 transition-all cursor-pointer"
+              className="telemetry-icon-button p-1 rounded transition-all cursor-pointer"
               title={isMinimized ? 'Expand' : 'Collapse'}
             >
               {isMinimized ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
@@ -119,7 +119,7 @@ export const AgenticTelemetryToast: React.FC<{
         {!isMinimized && (
           <div className="flex flex-col gap-2">
             <div className="flex items-start gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 flex-shrink-0 mt-0.5">
+              <div className="telemetry-event-icon w-9 h-9 rounded-xl border flex items-center justify-center flex-shrink-0 mt-0.5">
                 {currentEvent.icon === 'satellite' && <Satellite className="w-4 h-4 text-emerald-400" />}
                 {currentEvent.icon === 'vrp' && <Radio className="w-4 h-4 text-cyan-400 animate-pulse" />}
                 {currentEvent.icon === 'auction' && <TrendingUp className="w-4 h-4 text-emerald-400" />}
@@ -127,14 +127,14 @@ export const AgenticTelemetryToast: React.FC<{
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-1 mb-0.5">
-                  <span className="text-xs font-bold text-white truncate">
+                  <span className="text-xs font-bold truncate telemetry-title">
                     {currentEvent.title}
                   </span>
-                  <span className="text-[10px] text-slate-500 font-mono flex-shrink-0">
+                  <span className="text-[10px] font-mono flex-shrink-0 telemetry-muted">
                     {currentEvent.time}
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-300 leading-snug line-clamp-2">
+                <p className="text-[11px] leading-snug line-clamp-2 telemetry-detail">
                   {currentEvent.detail}
                 </p>
               </div>
@@ -142,12 +142,12 @@ export const AgenticTelemetryToast: React.FC<{
 
             {currentEvent.targetTab && (
               <div className="flex items-center justify-between pt-1 border-t border-white/5">
-                <span className="badge badge-cyan text-[9px] py-0 px-1.5">
+                <span className="telemetry-badge badge text-[9px] py-0 px-1.5">
                   {currentEvent.badge}
                 </span>
                 <button
                   onClick={() => onNavigateTab?.(currentEvent.targetTab!)}
-                  className="text-[11px] font-mono text-cyan-300 hover:text-cyan-200 font-semibold cursor-pointer flex items-center gap-1"
+                  className="telemetry-inspect text-[11px] font-mono font-semibold cursor-pointer flex items-center gap-1"
                 >
                   <span>Inspect Layer &rarr;</span>
                 </button>
