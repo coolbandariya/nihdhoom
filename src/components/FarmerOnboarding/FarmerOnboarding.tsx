@@ -51,6 +51,66 @@ export const FarmerOnboarding: React.FC = () => {
   const [otpStatus, setOtpStatus] = useState<'idle' | 'error' | 'success'>('idle');
   const [consentAccepted, setConsentAccepted] = useState(false);
   const [resendSeconds, setResendSeconds] = useState(0);
+  const [activeConsent, setActiveConsent] = useState(false);
+  const [withdrawBusy, setWithdrawBusy] = useState(false);
+  const [withdrawMessage, setWithdrawMessage] = useState('');
+
+  useEffect(() => {
+    if (DEMO_MODE || !supabase) return;
+    let cancelled = false;
+    void supabase.auth.getUser().then(async ({ data }) => {
+      if (!data.user) return;
+      const { data: consent } = await supabase
+        .from('consents')
+        .select('id')
+        .eq('profile_id', data.user.id)
+        .eq('consent_type', 'farmer_network')
+        .is('revoked_at', null)
+        .order('accepted_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (!cancelled) setActiveConsent(Boolean(consent));
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  const withdrawConsent = async () => {
+    if (DEMO_MODE || !supabase || withdrawBusy) return;
+    const confirmed = window.confirm('Withdraw NIRDHOOM operational consent? Future booking actions will require consent again.');
+    if (!confirmed) return;
+    setWithdrawBusy(true);
+    setWithdrawMessage('');
+    const { data } = await supabase.auth.getUser();
+    if (!data.user) {
+      setWithdrawBusy(false);
+      setWithdrawMessage('Your session has expired. Sign in again to manage consent.');
+      return;
+    }
+    const now = new Date().toISOString();
+    const { error: consentError } = await supabase
+      .from('consents')
+      .update({ revoked_at: now })
+      .eq('profile_id', data.user.id)
+      .eq('consent_type', 'farmer_network')
+      .is('revoked_at', null);
+    if (consentError) {
+      setWithdrawBusy(false);
+      setWithdrawMessage(consentError.message || 'Consent could not be withdrawn.');
+      return;
+    }
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .update({ consent_status: 'REVOKED' })
+      .eq('id', data.user.id);
+    setWithdrawBusy(false);
+    if (profileError) {
+      setWithdrawMessage(profileError.message || 'Consent was revoked, but profile status could not be updated.');
+      return;
+    }
+    setActiveConsent(false);
+    setConsentAccepted(false);
+    setWithdrawMessage('Consent withdrawn. New booking actions will require fresh consent.');
+  };
 
   useEffect(() => {
     if (resendSeconds <= 0) return;
@@ -179,6 +239,20 @@ export const FarmerOnboarding: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {!DEMO_MODE && activeConsent && (
+        <div className="flex flex-col gap-2 rounded-2xl border border-amber-200 bg-amber-50/70 px-4 py-3 text-sm text-amber-950 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <strong className="block text-xs font-black uppercase tracking-wide">Operational consent is active</strong>
+            <span className="text-xs text-amber-900/75">You can withdraw it at any time. Booking will require fresh consent afterwards.</span>
+          </div>
+          <button type="button" onClick={() => void withdrawConsent()} disabled={withdrawBusy}
+            className="min-h-10 rounded-xl border border-amber-300 bg-white px-3 text-xs font-bold text-amber-900 transition hover:bg-amber-100 disabled:opacity-50">
+            {withdrawBusy ? 'Withdrawing…' : 'Withdraw consent'}
+          </button>
+        </div>
+      )}
+      {withdrawMessage && <div role="status" className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs font-semibold text-slate-700">{withdrawMessage}</div>}
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Animated React Bits progress stepper */}
