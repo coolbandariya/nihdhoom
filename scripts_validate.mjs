@@ -5,6 +5,38 @@ const root = new URL('.', import.meta.url).pathname;
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 const exists = file => fs.existsSync(path.join(root, file));
 const errors = [];
+const expectedMigrationChain = [
+  '202609270001_nirdhoom_core.sql',
+  '202609270002_nirdhoom_production.sql',
+  '202609270003_nirdhoom_v6.sql',
+  '202609270004_nirdhoom_v7.sql',
+  '202610010001_field_geometry_verification.sql',
+  '202610010002_verified_area_booking.sql',
+  '202610010005_nirdhoom_booking_integrity.sql',
+  '202610010006_nirdhoom_verification_and_settlement_integrity.sql',
+  '202610010007_nirdhoom_operational_integrity.sql',
+  '20261001_nirdhoom_database_hygiene.sql',
+  '20261001_nirdhoom_rls_initplan_fix.sql',
+  '202610020008_nirdhoom_client_write_integrity.sql',
+  '202610020009_nirdhoom_security_advisor_cleanup.sql',
+  '202610020010_nirdhoom_residue_pooling_and_research.sql',
+  '202610020011_nirdhoom_residue_pooling_security_and_indexes.sql',
+  '202610020012_nirdhoom_residue_pool_verification_gate.sql',
+  '202610040001_machine_privacy_and_pool_member_visibility.sql',
+  '202610040002_revoke_trigger_function_execute.sql',
+  '202610050001_nirdhoom_telegram_identity.sql',
+  '202610050002_nirdhoom_telegram_webhook_idempotency.sql',
+  '202610050003_nirdhoom_telegram_identity_live_repair.sql',
+  '20261006_nirdhoom_integrity_hardening.sql',
+  '20261006_nirdhoom_residue_quantity_invariants.sql',
+];
+const migrationDir = path.join(root, 'supabase/migrations');
+const actualMigrations = fs.readdirSync(migrationDir).filter(name => name.endsWith('.sql')).sort();
+if (actualMigrations.length !== expectedMigrationChain.length ||
+    actualMigrations.some((name, index) => name !== expectedMigrationChain[index])) {
+  errors.push(`migration chain mismatch: expected ${expectedMigrationChain.length} chronological migrations, found ${actualMigrations.length}`);
+}
+
 const apiRouteFiles = [];
 function collectApiRoutes(dir, prefix = '') {
   if (!fs.existsSync(dir)) return;
