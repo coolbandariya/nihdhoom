@@ -103,7 +103,7 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
   };
 
   return (
-    <section className="mx-auto w-full max-w-5xl space-y-4">
+    <section className="mx-auto w-full max-w-7xl space-y-4">
       <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
         <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-emerald-50" aria-hidden="true" />
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
@@ -151,7 +151,7 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
         <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-3">
           <div className="grid gap-2 sm:grid-cols-4">
             {['Open Telegram', 'Securely link account', 'Book / track', 'Receive updates'].map((step, index) => (
-              <div key={step} className="flex items-center gap-2 rounded-xl bg-emerald-50/70 px-3 py-2.5">
+              <div key={step} className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5">
                 <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-emerald-700 text-xs font-black text-white">{index + 1}</span>
                 <span className="text-xs font-bold text-slate-800">{step}</span>
               </div>
@@ -200,13 +200,13 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
 
       <div className="rounded-2xl border border-slate-200 bg-white p-5 text-slate-900 shadow-sm">
         <div className="flex items-center gap-2">
-          <MapPin className="h-5 w-5 text-amber-400" />
+          <MapPin className="h-5 w-5 text-emerald-600" />
           <h3 className="text-lg font-extrabold">Telegram → NIRDHOOM workflow</h3>
         </div>
         <div className="mt-4 grid gap-2 sm:grid-cols-4">
           {['Farmer starts bot', 'Link field / consent', 'Book + track', 'Evidence + verification'].map((step, index) => (
-            <div key={step} className="rounded-xl border border-white/10 bg-white/5 p-3">
-              <div className="text-xs font-black text-amber-300">0{index + 1}</div>
+            <div key={step} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <div className="text-xs font-black text-emerald-700">0{index + 1}</div>
               <div className="mt-1 text-sm font-bold text-slate-800">{step}</div>
             </div>
           ))}
