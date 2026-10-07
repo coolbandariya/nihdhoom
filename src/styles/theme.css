@@ -209,3 +209,96 @@ html[data-theme="kisan"] .nirdhoom-field-app :where(.field-more-item.is-active,.
   html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero-image-scrim{background:linear-gradient(0deg,#FFFFFF 0%,rgba(255,255,255,0) 70%)}
   html[data-theme="kisan"] .nirdhoom-field-app .workspace-hero-copy{padding:1.35rem}
 }
+
+
+/* =========================================================
+   IMAGE SYSTEM — consistent photography across every page
+   ========================================================= */
+html[data-theme="kisan"] .nirdhoom-field-app img{
+  max-width:100%;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(
+  .home-hero-image,
+  .home-workflow-image img,
+  .home-research-image img,
+  .home-story-image img,
+  .home-evidence-image img,
+  .workspace-hero-image img
+){
+  display:block;
+  width:100%;
+  object-fit:cover;
+  object-position:center;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .home-hero{
+  overflow:hidden;
+  border:1px solid #E2E8F0;
+  border-radius:18px;
+  background:#FFFFFF;
+  box-shadow:0 8px 28px rgba(15,23,42,.08);
+}
+html[data-theme="kisan"] .nirdhoom-field-app .home-hero-image{
+  filter:saturate(.94) contrast(.98) brightness(1.04);
+}
+html[data-theme="kisan"] .nirdhoom-field-app .home-hero-overlay{
+  background:linear-gradient(90deg,rgba(15,23,42,.72) 0%,rgba(15,23,42,.38) 46%,rgba(15,23,42,.08) 100%)!important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .home-workflow-image,
+html[data-theme="kisan"] .nirdhoom-field-app .home-research-image,
+html[data-theme="kisan"] .nirdhoom-field-app .home-story-image,
+html[data-theme="kisan"] .nirdhoom-field-app .home-evidence-image{
+  overflow:hidden;
+  border:1px solid #E2E8F0;
+  border-radius:12px;
+  background:#F1F5F9;
+  box-shadow:0 4px 14px rgba(15,23,42,.06);
+}
+html[data-theme="kisan"] .nirdhoom-field-app .home-workflow-image img,
+html[data-theme="kisan"] .nirdhoom-field-app .home-story-image img,
+html[data-theme="kisan"] .nirdhoom-field-app .home-evidence-image img{
+  min-height:190px;
+  aspect-ratio:16/9;
+  filter:saturate(.95) contrast(.98) brightness(1.03);
+  transition:transform .3s ease,filter .3s ease;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .home-research-image img{
+  min-height:220px;
+  aspect-ratio:4/3;
+  filter:saturate(.92) contrast(.98) brightness(1.04);
+  transition:transform .3s ease,filter .3s ease;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.home-workflow-image,.home-research-image,.home-story-image,.home-evidence-image):hover img{
+  transform:scale(1.025);
+  filter:saturate(1) contrast(1) brightness(1.06);
+}
+html[data-theme="kisan"] .nirdhoom-field-app .home-photo-credit{
+  color:#E2E8F0!important;
+  background:rgba(15,23,42,.58)!important;
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:999px;
+  padding:.3rem .55rem;
+  backdrop-filter:blur(8px);
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.w-full.h-52,.w-full.h-48){
+  display:block;
+  border-radius:12px;
+  border:1px solid #E2E8F0;
+  background:#F1F5F9;
+  filter:saturate(.95) brightness(1.03);
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.w-full.h-52,.w-full.h-48,.w-full.h-24){
+  box-shadow:0 4px 12px rgba(15,23,42,.05);
+}
+html[data-theme="kisan"] .nirdhoom-field-app :where(img.rounded-full){
+  border-color:#D1D5DB!important;
+}
+@media(max-width:640px){
+  html[data-theme="kisan"] .nirdhoom-field-app .home-workflow-image img,
+  html[data-theme="kisan"] .nirdhoom-field-app .home-story-image img,
+  html[data-theme="kisan"] .nirdhoom-field-app .home-evidence-image img{
+    min-height:150px;
+  }
+  html[data-theme="kisan"] .nirdhoom-field-app .home-research-image img{
+    min-height:180px;
+  }
+}
