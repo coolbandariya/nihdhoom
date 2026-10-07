@@ -2,242 +2,61 @@
    2026 UI SYSTEM — contrast, readability, spacing hardening
    ========================================================= */
 html[data-theme="kisan"] .nirdhoom-field-app {
-  --ui-bg: #F8FAFC;
-  --ui-surface: #FFFFFF;
-  --ui-surface-muted: #F1F5F9;
-  --ui-border: #E2E8F0;
-  --ui-text: #0F172A;
-  --ui-text-secondary: #475569;
-  --ui-text-muted: #64748B;
-  --ui-primary: #15803D;
-  --ui-primary-hover: #166534;
-  --ui-primary-soft: #DCFCE7;
-  --ui-warning: #D97706;
-  --ui-warning-soft: #FEF3C7;
-  --ui-info: #2563EB;
-  --ui-info-soft: #DBEAFE;
-  --ui-secondary: #4F46E5;
-  --ui-danger: #DC2626;
-  --ui-danger-soft: #FEE2E2;
-  --ui-shadow-sm: 0 2px 8px rgba(15,23,42,.05);
-  --ui-shadow-md: 0 8px 24px rgba(15,23,42,.08);
+  --ui-bg:#F8FAFC; --ui-surface:#FFFFFF; --ui-surface-muted:#F1F5F9; --ui-border:#E2E8F0;
+  --ui-text:#0F172A; --ui-text-secondary:#475569; --ui-text-muted:#64748B;
+  --ui-primary:#15803D; --ui-primary-hover:#166534; --ui-primary-soft:#DCFCE7;
+  --ui-warning:#D97706; --ui-warning-soft:#FEF3C7; --ui-info:#2563EB; --ui-info-soft:#DBEAFE;
+  --ui-secondary:#4F46E5; --ui-danger:#DC2626; --ui-danger-soft:#FEE2E2;
+  --ui-shadow-sm:0 2px 8px rgba(15,23,42,.05); --ui-shadow-md:0 8px 24px rgba(15,23,42,.08);
+  background:var(--ui-bg)!important; color:var(--ui-text)!important;
 }
-
-/* Crisp application canvas and high-contrast type. */
-html[data-theme="kisan"] .nirdhoom-field-app {
-  background: var(--ui-bg) !important;
-  color: var(--ui-text) !important;
+html[data-theme="kisan"] .nirdhoom-field-app :where(h1,h2,h3,h4,h5,h6,strong,b){color:var(--ui-text)!important}
+html[data-theme="kisan"] .nirdhoom-field-app :where(p,li,td,dd){color:var(--ui-text-secondary)}
+html[data-theme="kisan"] .nirdhoom-field-app :where(small,.text-slate-400,.text-slate-500,.text-gray-400,.text-gray-500,.text-zinc-400,.text-zinc-500){color:var(--ui-text-muted)!important}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.panel,.buyer,.metric,.research-source,.action-card,.glass-panel,.glass-panel-emerald,.glass-panel-amber,.glass-panel-crimson){
+  background:var(--ui-surface)!important;border:1px solid var(--ui-border)!important;box-shadow:var(--ui-shadow-sm)!important;
 }
-html[data-theme="kisan"] .nirdhoom-field-app :where(h1,h2,h3,h4,h5,h6,strong,b) {
-  color: var(--ui-text) !important;
+html[data-theme="kisan"] .nirdhoom-field-app :where(button,[role="button"],a.button,.btn,.primary-button){border-radius:10px;font-weight:650}
+html[data-theme="kisan"] .nirdhoom-field-app :where(button.bg-green-600,button.bg-green-700,button.bg-emerald-600,button.bg-emerald-700,.btn-primary,.primary-button){
+  background:var(--ui-primary)!important;color:#fff!important;border-color:var(--ui-primary)!important;
 }
-html[data-theme="kisan"] .nirdhoom-field-app :where(p,li,td,dd) {
-  color: var(--ui-text-secondary);
+html[data-theme="kisan"] .nirdhoom-field-app :where(button.bg-green-600:hover,button.bg-green-700:hover,button.bg-emerald-600:hover,button.bg-emerald-700:hover,.btn-primary:hover,.primary-button:hover){
+  background:var(--ui-primary-hover)!important;color:#fff!important;
 }
-html[data-theme="kisan"] .nirdhoom-field-app :where(small,.text-slate-400,.text-slate-500,.text-gray-400,.text-gray-500,.text-zinc-400,.text-zinc-500) {
-  color: var(--ui-text-muted) !important;
+html[data-theme="kisan"] .nirdhoom-field-app :where(button:disabled,.btn:disabled,.primary-button:disabled){
+  background:#E2E8F0!important;color:#94A3B8!important;border-color:#E2E8F0!important;box-shadow:none!important;cursor:not-allowed;
 }
-
-/* White cards with explicit boundaries. */
-html[data-theme="kisan"] .nirdhoom-field-app :where(
-  .panel,.buyer,.metric,.research-source,.action-card,
-  .glass-panel,.glass-panel-emerald,.glass-panel-amber,.glass-panel-crimson
-) {
-  background: var(--ui-surface) !important;
-  border: 1px solid var(--ui-border) !important;
-  box-shadow: var(--ui-shadow-sm) !important;
+html[data-theme="kisan"] .nirdhoom-field-app :where(input,select,textarea){
+  min-height:46px;background:#fff!important;color:var(--ui-text)!important;border:1px solid #CBD5E1!important;border-radius:10px;box-shadow:none!important;
 }
-
-/* Buttons: never dark text on dark action backgrounds. */
-html[data-theme="kisan"] .nirdhoom-field-app :where(
-  button,[role="button"],a.button,.btn,.primary-button
-) {
-  border-radius: 10px;
-  font-weight: 650;
+html[data-theme="kisan"] .nirdhoom-field-app :where(input::placeholder,textarea::placeholder){color:#64748B!important}
+html[data-theme="kisan"] .nirdhoom-field-app :where(input:focus,select:focus,textarea:focus){
+  border:2px solid #16A34A!important;outline:none!important;box-shadow:0 0 0 3px rgba(22,163,74,.12)!important;
 }
-html[data-theme="kisan"] .nirdhoom-field-app :where(
-  button.bg-green-600,button.bg-green-700,button.bg-emerald-600,button.bg-emerald-700,
-  .btn-primary,.primary-button
-) {
-  background: var(--ui-primary) !important;
-  color: #fff !important;
-  border-color: var(--ui-primary) !important;
+html[data-theme="kisan"] .nirdhoom-field-app :where(input[type="date"],input[type="time"],input[type="datetime-local"]){padding-left:12px!important;padding-right:44px!important}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.input-icon,.field-icon,.date-icon){color:#475569!important;pointer-events:none}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.status-success,.badge-success){color:#166534!important;background:#DCFCE7!important;border-color:#86EFAC!important}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.status-warning,.badge-warning){color:#92400E!important;background:#FEF3C7!important;border-color:#FCD34D!important}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.status-info,.badge-info){color:#1E40AF!important;background:#DBEAFE!important;border-color:#93C5FD!important}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.status-danger,.badge-danger){color:#991B1B!important;background:#FEE2E2!important;border-color:#FCA5A5!important}
+html[data-theme="kisan"] .nirdhoom-field-header{background:rgba(255,255,255,.96)!important;border-color:var(--ui-border)!important;box-shadow:var(--ui-shadow-sm)!important}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.field-nav-item,.field-more-button){color:var(--ui-text-secondary)!important}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.field-nav-item.is-active,.field-more-button.is-active){color:#166534!important;background:#DCFCE7!important}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.leaflet-control,.map-control,.map-overlay,.gis-control){
+  background:rgba(255,255,255,.94)!important;color:var(--ui-text)!important;border:1px solid var(--ui-border)!important;box-shadow:var(--ui-shadow-md)!important;backdrop-filter:blur(8px);
 }
-html[data-theme="kisan"] .nirdhoom-field-app :where(
-  button.bg-green-600:hover,button.bg-green-700:hover,button.bg-emerald-600:hover,
-  button.bg-emerald-700:hover,.btn-primary:hover,.primary-button:hover
-) {
-  background: var(--ui-primary-hover) !important;
-  color: #fff !important;
-}
-html[data-theme="kisan"] .nirdhoom-field-app :where(
-  button:disabled,.btn:disabled,.primary-button:disabled
-) {
-  background: #E2E8F0 !important;
-  color: #94A3B8 !important;
-  border-color: #E2E8F0 !important;
-  box-shadow: none !important;
-  cursor: not-allowed;
-}
-
-/* Form controls: readable text, generous icon clearance, strong focus. */
-html[data-theme="kisan"] .nirdhoom-field-app :where(
-  input,select,textarea
-) {
-  min-height: 46px;
-  background: #fff !important;
-  color: var(--ui-text) !important;
-  border: 1px solid #CBD5E1 !important;
-  border-radius: 10px;
-  box-shadow: none !important;
-}
-html[data-theme="kisan"] .nirdhoom-field-app :where(
-  input::placeholder,textarea::placeholder
-) {
-  color: #64748B !important;
-}
-html[data-theme="kisan"] .nirdhoom-field-app :where(
-  input:focus,select:focus,textarea:focus
-) {
-  border: 2px solid #16A34A !important;
-  outline: none !important;
-  box-shadow: 0 0 0 3px rgba(22,163,74,.12) !important;
-}
-html[data-theme="kisan"] .nirdhoom-field-app :where(
-  input[type="date"],input[type="time"],input[type="datetime-local"]
-) {
-  padding-left: 12px !important;
-  padding-right: 44px !important;
-}
-html[data-theme="kisan"] .nirdhoom-field-app :where(
-  .input-icon,.field-icon,.date-icon
-) {
-  color: #475569 !important;
-  pointer-events: none;
-}
-
-/* Status colors remain semantic and legible. */
-html[data-theme="kisan"] .nirdhoom-field-app :where(.status-success,.badge-success) {
-  color: #166534 !important;
-  background: var(--ui-primary-soft) !important;
-  border-color: #86EFAC !important;
-}
-html[data-theme="kisan"] .nirdhoom-field-app :where(.status-warning,.badge-warning) {
-  color: #92400E !important;
-  background: var(--ui-warning-soft) !important;
-  border-color: #FCD34D !important;
-}
-html[data-theme="kisan"] .nirdhoom-field-app :where(.status-info,.badge-info) {
-  color: #1E40AF !important;
-  background: var(--ui-info-soft) !important;
-  border-color: #93C5FD !important;
-}
-html[data-theme="kisan"] .nirdhoom-field-app :where(.status-danger,.badge-danger) {
-  color: #991B1B !important;
-  background: var(--ui-danger-soft) !important;
-  border-color: #FCA5A5 !important;
-}
-
-/* Navigation: restrained active state, no neon. */
-html[data-theme="kisan"] .nirdhoom-field-header {
-  background: rgba(255,255,255,.96) !important;
-  border-color: var(--ui-border) !important;
-  box-shadow: var(--ui-shadow-sm) !important;
-}
-html[data-theme="kisan"] .nirdhoom-field-app :where(.field-nav-item,.field-more-button) {
-  color: var(--ui-text-secondary) !important;
-}
-html[data-theme="kisan"] .nirdhoom-field-app :where(.field-nav-item.is-active,.field-more-button.is-active) {
-  color: #166534 !important;
-  background: var(--ui-primary-soft) !important;
-}
-
-/* Maps: controls are readable without obscuring the map. */
-html[data-theme="kisan"] .nirdhoom-field-app :where(
-  .leaflet-control,.map-control,.map-overlay,.gis-control
-) {
-  background: rgba(255,255,255,.94) !important;
-  color: var(--ui-text) !important;
-  border: 1px solid var(--ui-border) !important;
-  box-shadow: var(--ui-shadow-md) !important;
-  backdrop-filter: blur(8px);
-}
-html[data-theme="kisan"] .nirdhoom-field-app :where(
-  .leaflet-control-zoom a,.leaflet-bar a
-) {
-  background: #fff !important;
-  color: var(--ui-text) !important;
-  border-color: var(--ui-border) !important;
-}
-
-/* Operational cards: clear hierarchy without excessive decoration. */
-html[data-theme="kisan"] .nirdhoom-field-app :where(
-  .metric,.action-card,.buyer,.panel
-) {
-  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
-}
-html[data-theme="kisan"] .nirdhoom-field-app :where(
-  .metric:hover,.action-card:hover,.buyer:hover
-) {
-  transform: translateY(-2px);
-  box-shadow: var(--ui-shadow-md) !important;
-  border-color: #CBD5E1 !important;
-}
-
-/* Tables and dense operational lists. */
-html[data-theme="kisan"] .nirdhoom-field-app :where(table) {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-}
-html[data-theme="kisan"] .nirdhoom-field-app :where(th) {
-  color: #334155 !important;
-  background: #F8FAFC !important;
-  font-weight: 700;
-}
-html[data-theme="kisan"] .nirdhoom-field-app :where(th,td) {
-  padding: .85rem 1rem;
-  border-bottom: 1px solid var(--ui-border);
-}
-html[data-theme="kisan"] .nirdhoom-field-app :where(tr:hover td) {
-  background: #F8FAFC;
-}
-
-/* Remove the remaining washed-out/neon feel from common utility colors. */
-html[data-theme="kisan"] .nirdhoom-field-app :where(
-  .text-cyan-300,.text-cyan-400,.text-sky-300,.text-sky-400,
-  .text-blue-300,.text-blue-400,.text-purple-300,.text-purple-400,
-  .text-violet-300,.text-violet-400
-) {
-  color: var(--ui-text-secondary) !important;
-}
-html[data-theme="kisan"] .nirdhoom-field-app :where(
-  .bg-cyan-500,.bg-sky-500,.bg-blue-500,.bg-purple-500,.bg-violet-500
-) {
-  background: var(--ui-primary) !important;
-  color: #fff !important;
-}
-
-/* Accessibility: visible keyboard focus everywhere interactive. */
-html[data-theme="kisan"] .nirdhoom-field-app :where(
-  button,a,input,select,textarea,[tabindex]:not([tabindex="-1"])
-):focus-visible {
-  outline: 3px solid rgba(37,99,235,.32) !important;
-  outline-offset: 2px;
-}
-
-/* Small screens: preserve readability instead of compressing content. */
-@media (max-width: 760px) {
-  html[data-theme="kisan"] .nirdhoom-field-app :where(.grid) {
-    gap: 1rem;
-  }
-  html[data-theme="kisan"] .nirdhoom-field-app :where(
-    .panel,.buyer,.metric,.action-card,.glass-panel,.glass-panel-emerald,
-    .glass-panel-amber,.glass-panel-crimson
-  ) {
-    padding: 1rem !important;
-  }
-  html[data-theme="kisan"] .nirdhoom-field-app :where(button,[role="button"]) {
-    min-height: 46px;
-  }
+html[data-theme="kisan"] .nirdhoom-field-app :where(.leaflet-control-zoom a,.leaflet-bar a){background:#fff!important;color:var(--ui-text)!important;border-color:var(--ui-border)!important}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.metric,.action-card,.buyer,.panel){transition:transform 180ms ease,box-shadow 180ms ease,border-color 180ms ease}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.metric:hover,.action-card:hover,.buyer:hover){transform:translateY(-2px);box-shadow:var(--ui-shadow-md)!important;border-color:#CBD5E1!important}
+html[data-theme="kisan"] .nirdhoom-field-app :where(table){width:100%;border-collapse:separate;border-spacing:0}
+html[data-theme="kisan"] .nirdhoom-field-app :where(th){color:#334155!important;background:#F8FAFC!important;font-weight:700}
+html[data-theme="kisan"] .nirdhoom-field-app :where(th,td){padding:.85rem 1rem;border-bottom:1px solid var(--ui-border)}
+html[data-theme="kisan"] .nirdhoom-field-app :where(tr:hover td){background:#F8FAFC}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.text-cyan-300,.text-cyan-400,.text-sky-300,.text-sky-400,.text-blue-300,.text-blue-400,.text-purple-300,.text-purple-400,.text-violet-300,.text-violet-400){color:var(--ui-text-secondary)!important}
+html[data-theme="kisan"] .nirdhoom-field-app :where(.bg-cyan-500,.bg-sky-500,.bg-blue-500,.bg-purple-500,.bg-violet-500){background:var(--ui-primary)!important;color:#fff!important}
+html[data-theme="kisan"] .nirdhoom-field-app :where(button,a,input,select,textarea,[tabindex]:not([tabindex="-1"])):focus-visible{outline:3px solid rgba(37,99,235,.32)!important;outline-offset:2px}
+@media(max-width:760px){
+  html[data-theme="kisan"] .nirdhoom-field-app :where(.grid){gap:1rem}
+  html[data-theme="kisan"] .nirdhoom-field-app :where(.panel,.buyer,.metric,.action-card,.glass-panel,.glass-panel-emerald,.glass-panel-amber,.glass-panel-crimson){padding:1rem!important}
+  html[data-theme="kisan"] .nirdhoom-field-app :where(button,[role="button"]){min-height:46px}
 }
