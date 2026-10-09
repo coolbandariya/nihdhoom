@@ -41,7 +41,7 @@ export const MultiOfftakeAuction: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-[family-name:var(--font-display)] text-[24px] font-semibold leading-tight text-[var(--ink)]">
+                <h3 className="font-[family-name:var(--font-display)] text-[24px] font-bold leading-tight text-[var(--ink)]">
                   Multi-offtake planning simulator
                 </h3>
                 <span className="badge badge-emerald text-xs">

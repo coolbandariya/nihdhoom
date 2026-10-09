@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase';
 import { Field, BurnEvent } from '../../types';
 import { executeFirmsAudit, generateNonBurnCertificate } from '../../utils/spatialVerification';
 import { CarbonCertificate } from './CarbonCertificate';
+import { EvidenceReview } from './EvidenceReview';
 import { 
   Satellite, 
   ShieldCheck, 
@@ -33,6 +34,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
   const [selectedFieldForCert, setSelectedFieldForCert] = useState<Field | null>(null);
   const [reviewingFieldId, setReviewingFieldId] = useState<string | null>(null);
   const [reviewMessage, setReviewMessage] = useState('');
+  const [reviewFocus, setReviewFocus] = useState<{ id: string; nonce: number } | null>(null);
 
   const handleVerify = async (field: Field) => {
     setReviewingFieldId(field.id);
@@ -78,7 +80,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
             </div>
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <h3 className="font-[family-name:var(--font-display)] text-[24px] font-semibold leading-tight text-[var(--ink)]">
+                <h3 className="font-[family-name:var(--font-display)] text-[24px] font-bold leading-tight text-[var(--ink)]">
                   Check field proof
                 </h3>
                 <span className="ui-chip is-green">
@@ -94,7 +96,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
           <div className="flex shrink-0 items-center gap-4 rounded-2xl border border-[var(--brand-line)] bg-[var(--brand-soft)] px-5 py-4">
             <div>
               <span className="ui-kv-label block">Fields checked</span>
-              <div className="font-[family-name:var(--font-display)] text-[34px] font-semibold leading-none text-[var(--brand-ink)]">
+              <div className="font-[family-name:var(--font-display)] text-[34px] font-bold leading-none text-[var(--brand-ink)]">
                 {auditReport.complianceRate}%
               </div>
             </div>
@@ -192,6 +194,16 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
         </div>
       </div>
 
+      <EvidenceReview
+        fields={fields}
+        fireEvents={fireEvents}
+        demoMode={demoMode}
+        focusFieldId={reviewFocus?.id ?? null}
+        focusNonce={reviewFocus?.nonce}
+        reviewingFieldId={reviewingFieldId}
+        onApprove={handleVerify}
+      />
+
       {/* Spatial Audit Table */}
       <div className="ui-card">
         <div className="ui-card-head">
@@ -223,7 +235,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
               {fields.map((field) => {
                 return (
                   <tr key={field.id}>
-                    <td className="font-[family-name:var(--font-display)] text-[16px] font-semibold !text-[var(--ink)] whitespace-nowrap">
+                    <td className="font-[family-name:var(--font-display)] text-[16px] font-bold !text-[var(--ink)] whitespace-nowrap">
                       {field.khasra_no}
                     </td>
                     <td className="py-3 px-3">
@@ -252,7 +264,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
                       <div className="flex items-center justify-end gap-2">
                         {(field.status === 'CLEARED_PENDING_AUDIT' || demoMode) && field.status !== 'VERIFIED_NON_BURN' && (
                           <button
-                            onClick={() => void handleVerify(field)}
+                            onClick={() => setReviewFocus({ id: field.id, nonce: Date.now() })}
                             disabled={reviewingFieldId === field.id}
                             className="ui-btn is-primary is-sm"
                           >

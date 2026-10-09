@@ -15,17 +15,27 @@ export function TelegramChannel() {
   const [linkError, setLinkError] = useState('');
   const [linkExpiresAt, setLinkExpiresAt] = useState('');
   const [botReady, setBotReady] = useState<boolean | null>(null);
+  const [accountFeatures, setAccountFeatures] = useState<boolean | null>(null);
+  const [serverBotUsername, setServerBotUsername] = useState('');
 
   useEffect(() => {
     let active = true;
+    // The bot answers commands as soon as the token and webhook secret exist;
+    // account linking additionally needs the Supabase service role.
     fetch('/api/notify/telegram-webhook', { method: 'GET', cache: 'no-store' })
-      .then((res) => res.ok)
-      .then((ok) => { if (active) setBotReady(ok); })
-      .catch(() => { if (active) setBotReady(false); });
+      .then((res) => res.json())
+      .then((health) => {
+        if (!active) return;
+        setBotReady(Boolean(health?.bot_ready ?? health?.configured));
+        setAccountFeatures(Boolean(health?.account_features ?? health?.configured));
+        if (typeof health?.bot_username === 'string') setServerBotUsername(health.bot_username);
+      })
+      .catch(() => { if (active) { setBotReady(false); setAccountFeatures(false); } });
     return () => { active = false; };
   }, []);
 
-  const botUrl = useMemo(() => BOT_USERNAME ? `https://t.me/${BOT_USERNAME}` : undefined, []);
+  const botUsername = BOT_USERNAME || serverBotUsername;
+  const botUrl = useMemo(() => botUsername ? `https://t.me/${botUsername}` : undefined, [botUsername]);
 
   const copy = {
     pa: {
@@ -127,7 +137,7 @@ export function TelegramChannel() {
               </div>
               <div>
                 <div className="text-xs font-black uppercase tracking-[0.12em] text-slate-500">NIRDHOOM Bot</div>
-                <div className="mt-0.5 text-lg font-black text-slate-950">{BOT_USERNAME ? `@${BOT_USERNAME}` : 'Not configured'}</div>
+                <div className="mt-0.5 text-lg font-black text-slate-950">{botUsername ? `@${botUsername}` : 'Not configured'}</div>
               </div>
             </div>
 
@@ -165,6 +175,12 @@ export function TelegramChannel() {
             )}
             {linkError && <p role="alert" className="mt-3 text-center text-xs font-bold text-red-700">{linkError}</p>}
 
+            {botReady === true && accountFeatures === false && (
+              <p className="mt-3 text-center text-[11px] font-semibold text-[var(--muted)]">
+                Bot menus work now. Account linking turns on once the database is connected.
+              </p>
+            )}
+
             {MINI_APP_URL && (
               <a href={MINI_APP_URL} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center justify-center gap-2 rounded-xl border border-[#229ED9]/15 bg-white px-4 py-2.5 text-xs font-black text-[#197aa8] hover:bg-sky-50">
                 <SmartphoneIcon className="h-4 w-4" /> Open Telegram Mini App <ExternalLink className="h-3.5 w-3.5" />
@@ -198,6 +214,40 @@ export function TelegramChannel() {
           </div>
         </div>
       </div>
+
+      {botReady === true ? (
+        <div className="ui-card">
+          <div className="ui-card-head">
+            <div>
+              <div className="ui-card-title"><Send className="!text-[#229ED9]" /><h3>Try it in Telegram</h3></div>
+              <p className="ui-card-sub">Commands and plain words both work, in Punjabi, Hindi or English.</p>
+            </div>
+            {botUrl && <a href={botUrl} target="_blank" rel="noreferrer" className="ui-btn is-primary"><Send /> {copy.cta}</a>}
+          </div>
+          <div className="bot-samples">
+            {[
+              ['/start', 'Menu with buttons'],
+              ['/book', 'Book a parali pickup'],
+              ['ਮਸ਼ੀਨ ਕਿੱਥੇ ਹੈ?', 'Track the machine'],
+              ['पराली बुक करनी है', 'Booking in Hindi'],
+              ['/verify', 'How field proof works'],
+              ['/language', 'ਪੰਜਾਬੀ / हिंदी / English'],
+            ].map(([say, does]) => (
+              <div key={say} className="bot-sample"><code>{say}</code><span>{does}</span></div>
+            ))}
+          </div>
+        </div>
+      ) : botReady === false ? (
+        <div className="ui-card is-sky">
+          <div className="ui-card-title"><Bell className="!text-[var(--sky)]" /><h3>Switch on the bot</h3></div>
+          <p className="ui-card-sub">Three steps, about five minutes. The code is ready; it only needs your bot token.</p>
+          <ol className="bot-setup">
+            <li><b>Create the bot.</b> In Telegram, message <code>@BotFather</code>, send <code>/newbot</code> and copy the token.</li>
+            <li><b>Add it to Vercel.</b> Set <code>TELEGRAM_BOT_TOKEN</code>, <code>TELEGRAM_BOT_USERNAME</code>, <code>VITE_TELEGRAM_BOT_USERNAME</code>, <code>NIRDHOOM_PUBLIC_URL</code> (your site, so bot buttons open the right page) and a <code>TELEGRAM_WEBHOOK_SECRET</code> (generate one with <code>npm run telegram:setup -- --new-secret</code>), then redeploy.</li>
+            <li><b>Connect the webhook.</b> Run <code>npm run telegram:setup -- --url https://your-site.vercel.app</code>. It registers the webhook and the commands in all three languages.</li>
+          </ol>
+        </div>
+      ) : null}
 
       <HindiTextConverter />
     </section>

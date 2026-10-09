@@ -92,7 +92,7 @@ export const HarvestForecast: React.FC = () => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-[family-name:var(--font-display)] text-[24px] font-semibold leading-tight text-[var(--ink)]">
+              <h3 className="font-[family-name:var(--font-display)] text-[24px] font-bold leading-tight text-[var(--ink)]">
                 Harvest pressure planning — illustrative
               </h3>
               <span className="badge badge-emerald text-xs">

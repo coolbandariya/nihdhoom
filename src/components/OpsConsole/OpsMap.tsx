@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import L from 'leaflet';
 import { Field, Machine, BurnEvent, StorageYard, Buyer, LatLng } from '../../types';
 import { supabase } from '../../lib/supabase';
-import { Layers, Flame, MapPin, PackageCheck, Route, CloudSun, Building2, ChevronDown, Minus, Plus, LocateFixed } from 'lucide-react';
+import { Layers, Flame, MapPin, PackageCheck, Route, CloudSun, Building2, ChevronDown, Minus, Plus, LocateFixed, ListFilter, Search, X } from 'lucide-react';
+import { FIELD_STAGES, STAGE_META, fieldRing, fieldStage, type FieldStage } from '../../lib/fieldStatus';
 
 // Popups pan clear of the floating map controls (GPS badge, layers, zoom, legend).
 L.Popup.mergeOptions({
@@ -22,6 +23,8 @@ interface OpsMapProps {
   activeRoutePolyline?: LatLng[];
   highlightFirmsFire?: boolean;
   demoMode?: boolean;
+  /** Open the field finder panel on first render (Track My Machine). */
+  defaultFieldListOpen?: boolean;
 }
 
 export const OpsMap: React.FC<OpsMapProps> = ({
@@ -35,6 +38,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
   activeRoutePolyline,
   highlightFirmsFire = true,
   demoMode = false,
+  defaultFieldListOpen = false,
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
@@ -50,6 +54,62 @@ export const OpsMap: React.FC<OpsMapProps> = ({
   const [showRoute, setShowRoute] = useState(true);
   const [showWeather, setShowWeather] = useState(true);
   const [layersOpen, setLayersOpen] = useState(false);
+  const [fieldListOpen, setFieldListOpen] = useState(() => defaultFieldListOpen && (typeof window === 'undefined' || window.innerWidth > 720));
+  const [fieldQuery, setFieldQuery] = useState('');
+  const [hiddenStages, setHiddenStages] = useState<Set<FieldStage>>(() => new Set());
+  const fittedRef = useRef(false);
+
+  const stageCounts = useMemo(() => {
+    const counts = Object.fromEntries(FIELD_STAGES.map((stage) => [stage, 0])) as Record<FieldStage, number>;
+    fields.forEach((field) => { counts[fieldStage(field.status)] += 1; });
+    return counts;
+  }, [fields]);
+
+  const visibleFields = useMemo(() => fields.filter((field) => !hiddenStages.has(fieldStage(field.status))), [fields, hiddenStages]);
+
+  const listedFields = useMemo(() => {
+    const q = fieldQuery.trim().toLowerCase();
+    if (!q) return visibleFields;
+    return visibleFields.filter((field) => [field.khasra_no, field.village, field.farmer_name, field.id]
+      .some((value) => String(value || '').toLowerCase().includes(q)));
+  }, [visibleFields, fieldQuery]);
+
+  const toggleStage = (stage: FieldStage) => {
+    setHiddenStages((current) => {
+      const next = new Set(current);
+      if (next.has(stage)) next.delete(stage); else next.add(stage);
+      return next;
+    });
+  };
+
+  // Keep fields clear of the floating controls (finder panel, legend, zoom).
+  const fitPadding = () => {
+    const width = mapContainerRef.current?.clientWidth ?? 0;
+    const panel = fieldListOpen && width > 640 ? 310 : 40;
+    return { paddingTopLeft: L.point(panel, 110), paddingBottomRight: L.point(70, 130) };
+  };
+
+  const fitToFields = (list: Field[] = visibleFields) => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+    const points = list.flatMap((field) => {
+      const ring = fieldRing(field);
+      return ring.length ? ring : [[Number(field.center?.lat), Number(field.center?.lng)] as [number, number]];
+    }).filter(([lat, lng]) => Number.isFinite(lat) && Number.isFinite(lng));
+    if (points.length === 0) {
+      map.flyTo([30.2458, 75.8421], 11);
+      return;
+    }
+    map.flyToBounds(L.latLngBounds(points), { ...fitPadding(), maxZoom: 15, duration: 0.9 });
+  };
+
+  const focusField = (field: Field) => {
+    onSelectField(field);
+    const map = mapInstanceRef.current;
+    const ring = fieldRing(field);
+    if (map && ring.length >= 3) map.flyToBounds(L.latLngBounds(ring), { padding: [90, 90], maxZoom: 16, duration: 0.9 });
+    else if (map && field.center) map.flyTo([field.center.lat, field.center.lng], 15, { duration: 0.9 });
+  };
   const [weatherPoint, setWeatherPoint] = useState<{ temperature: number; precipitationProbability: number; precipitationMm: number; windGustKmh: number } | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [mapError, setMapError] = useState<string | null>(null);
@@ -178,43 +238,43 @@ export const OpsMap: React.FC<OpsMapProps> = ({
 
     // 1. Render Registered Customer Fields (Polygons)
     if (showFields) {
-      fields.forEach((field) => {
+      visibleFields.forEach((field) => {
         const isSelected = selectedField?.id === field.id;
-        const coords: [number, number][] = (field.geometry || [])
-          .filter((p) => Number.isFinite(Number(p?.lat)) && Number.isFinite(Number(p?.lng)))
-          .map((p) => [Number(p.lat), Number(p.lng)] as [number, number]);
+        const coords = fieldRing(field);
         if (coords.length < 3) return;
 
-        let fillColor = '#4f9a6a'; // Field green: Cleared / Verified
-        let strokeColor = '#9fd4b0';
-
-        if (field.status === 'BALING_IN_PROGRESS') {
-          fillColor = '#d49c35'; // Wheat
-          strokeColor = '#f0c66e';
-        } else if (field.status === 'SCHEDULED') {
-          fillColor = '#367a96'; // Monsoon sky
-          strokeColor = '#9fd0e3';
-        } else if (field.status === 'REGISTERED') {
-          fillColor = '#f1efe8'; // Paper (declared, not yet booked)
-          strokeColor = '#ffffff';
-        }
+        const stage = STAGE_META[fieldStage(field.status)];
 
         const polygon = L.polygon(coords, {
-          color: isSelected ? '#ffffff' : strokeColor,
-          weight: isSelected ? 3.5 : 2,
-          fillColor: fillColor,
-          fillOpacity: isSelected ? 0.6 : 0.32,
-          dashArray: field.status === 'REGISTERED' ? '4, 4' : undefined,
+          color: isSelected ? '#ffffff' : stage.stroke,
+          weight: isSelected ? 4 : 2.5,
+          fillColor: stage.fill,
+          fillOpacity: isSelected ? 0.62 : 0.4,
+          dashArray: stage.dashed ? '5, 5' : undefined,
         });
 
         polygon.bindTooltip(
-          `<div class="map-pop-title">${field.khasra_no}</div><div class="map-pop-sub">${field.farmer_name}</div><div>${field.acreage} ac (${field.paddy_variety})</div><div class="map-pop-note">FIRMS observations are supporting evidence only • Planning window</div>`,
-          { direction: 'top', className: 'leaflet-custom-tooltip' }
+          `<div class="map-pop-title">${field.khasra_no}</div><div class="map-pop-sub">${field.farmer_name} · ${field.village}</div><div><span class="map-pop-stage" style="--stage:${stage.fill}">${stage.label}</span> ${field.acreage} ac (${field.paddy_variety})</div><div class="map-pop-note">Click to open field details</div>`,
+          { direction: 'top', className: 'leaflet-custom-tooltip', sticky: true }
         );
 
         polygon.on('click', () => {
           onSelectField(field);
         });
+
+        // A pin at the field centre keeps small fields findable when zoomed out.
+        const pinIcon = L.divIcon({
+          html: `<div class="map-field-pin${isSelected ? ' is-selected' : ''}" style="--stage:${stage.fill}"><span></span><b>${field.khasra_no || ''}</b></div>`,
+          className: 'map-field-pin-wrap',
+          iconSize: [18, 18],
+          iconAnchor: [9, 9],
+        });
+        const center = field.center && Number.isFinite(Number(field.center.lat))
+          ? [Number(field.center.lat), Number(field.center.lng)] as [number, number]
+          : L.polygon(coords).getBounds().getCenter();
+        L.marker(center, { icon: pinIcon, zIndexOffset: isSelected ? 900 : 300, keyboard: false })
+          .on('click', () => focusField(field))
+          .addTo(layerGroup);
 
         polygon.addTo(layerGroup);
       });
@@ -406,6 +466,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
     storageYards,
     buyers,
     selectedField,
+    visibleFields,
     activeRoutePolyline,
     highlightFirmsFire,
     showFields,
@@ -420,15 +481,25 @@ export const OpsMap: React.FC<OpsMapProps> = ({
     animatedPositions,
   ]);
 
-  // Pan to selected field
+  // Open framed on the fields instead of a fixed district-wide zoom.
   useEffect(() => {
-    if (selectedField && mapInstanceRef.current) {
-      mapInstanceRef.current.flyTo(
-        [selectedField.center.lat, selectedField.center.lng],
-        13,
-        { duration: 1.2 }
-      );
-    }
+    const map = mapInstanceRef.current;
+    if (!map || fittedRef.current || fields.length === 0) return;
+    fittedRef.current = true;
+    const points = fields.flatMap((field) => fieldRing(field));
+    if (points.length) map.fitBounds(L.latLngBounds(points), { ...fitPadding(), maxZoom: 15 });
+  }, [fields]);
+
+  // Zoom to a field when it is picked elsewhere (list, dispatch panel, field cards).
+  const lastSelectedRef = useRef<string | null>(selectedField?.id ?? null);
+  useEffect(() => {
+    if (!selectedField || selectedField.id === lastSelectedRef.current) return;
+    lastSelectedRef.current = selectedField.id;
+    const map = mapInstanceRef.current;
+    if (!map) return;
+    const ring = fieldRing(selectedField);
+    if (ring.length >= 3) map.flyToBounds(L.latLngBounds(ring), { padding: [90, 90], maxZoom: 16, duration: 0.9 });
+    else map.flyTo([selectedField.center.lat, selectedField.center.lng], 15, { duration: 0.9 });
   }, [selectedField]);
 
   const layerToggles: { key: string; checked: boolean; set: (value: boolean) => void; label: React.ReactNode; swatch: React.ReactNode; tone?: string }[] = [
@@ -473,6 +544,55 @@ export const OpsMap: React.FC<OpsMapProps> = ({
         <span className="map-gps-time">Updated {lastRefresh.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
       </div>
 
+      {/* Field finder Top-Left */}
+      <div className="map-finder">
+        <button
+          type="button"
+          className={`map-finder-button ${fieldListOpen ? 'is-open' : ''}`}
+          onClick={() => setFieldListOpen((open) => !open)}
+          aria-expanded={fieldListOpen}
+        >
+          <ListFilter className="h-4 w-4" />
+          <span>Find a field</span>
+          <span className="map-layers-count">{visibleFields.length}</span>
+        </button>
+        {fieldListOpen && (
+          <div className="map-finder-panel">
+            <div className="map-finder-search">
+              <Search className="h-4 w-4" aria-hidden="true" />
+              <input
+                value={fieldQuery}
+                onChange={(event) => setFieldQuery(event.target.value)}
+                placeholder="Khasra, village or farmer"
+                aria-label="Search fields on the map"
+                type="search"
+              />
+              {fieldQuery && <button type="button" aria-label="Clear search" onClick={() => setFieldQuery('')}><X className="h-3.5 w-3.5" /></button>}
+            </div>
+            <ul className="map-finder-list">
+              {listedFields.length === 0 ? (
+                <li className="map-finder-empty">No fields match. Clear the search or turn a status back on below.</li>
+              ) : listedFields.map((field) => {
+                const meta = STAGE_META[fieldStage(field.status)];
+                const selected = selectedField?.id === field.id;
+                return (
+                  <li key={field.id}>
+                    <button type="button" className={`map-finder-row ${selected ? 'is-selected' : ''}`} onClick={() => focusField(field)}>
+                      <span className={`map-stage-swatch ${meta.dashed ? 'is-dashed' : ''}`} style={{ '--stage': meta.fill } as React.CSSProperties} />
+                      <span className="min-w-0 flex-1">
+                        <strong>{field.khasra_no || field.id}</strong>
+                        <small>{field.village} · {Number(field.acreage || 0).toFixed(1)} ac</small>
+                      </span>
+                      <span className="map-finder-stage">{meta.label}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+      </div>
+
       {/* Layers control Top-Right */}
       <div className="map-layers">
         <button
@@ -509,21 +629,31 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       <div className="map-zoom">
         <button type="button" aria-label="Zoom in" onClick={() => mapInstanceRef.current?.zoomIn()}><Plus className="h-4 w-4" /></button>
         <button type="button" aria-label="Zoom out" onClick={() => mapInstanceRef.current?.zoomOut()}><Minus className="h-4 w-4" /></button>
-        <button type="button" aria-label="Recenter map" onClick={() => mapInstanceRef.current?.flyTo([30.2458, 75.8421], 11)}><LocateFixed className="h-4 w-4" /></button>
+        <button type="button" aria-label="Show all fields" title="Show all fields" onClick={() => fitToFields()}><LocateFixed className="h-4 w-4" /></button>
       </div>
 
       {/* Bottom: legend above the hotspot cluster shortcuts */}
       <div className="map-bottom">
-        <div className="map-legend">
-          <span className="flex items-center gap-1.5">
-            <span className="map-swatch is-green"></span>
-            <span>Field status / verified evidence</span>
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="map-swatch is-wheat"></span>
-            <span>Baler Active</span>
-          </span>
-          <span className="flex items-center gap-1.5">
+        <div className="map-legend" role="group" aria-label="Field status filter">
+          {FIELD_STAGES.map((stage) => {
+            const meta = STAGE_META[stage];
+            const on = !hiddenStages.has(stage);
+            return (
+              <button
+                key={stage}
+                type="button"
+                className={`map-stage ${on ? '' : 'is-off'}`}
+                aria-pressed={on}
+                title={on ? `Hide ${meta.label.toLowerCase()} fields` : `Show ${meta.label.toLowerCase()} fields`}
+                onClick={() => toggleStage(stage)}
+              >
+                <span className={`map-stage-swatch ${meta.dashed ? 'is-dashed' : ''}`} style={{ '--stage': meta.fill } as React.CSSProperties} />
+                <span>{meta.label}</span>
+                <b>{stageCounts[stage]}</b>
+              </button>
+            );
+          })}
+          <span className="map-stage is-static">
             <span className="map-swatch is-fire"></span>
             <span className="font-semibold text-[var(--ember-ink)]">External thermal observation</span>
           </span>

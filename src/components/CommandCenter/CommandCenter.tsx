@@ -40,6 +40,22 @@ export function CommandCenter({
   const residueLots = fields.filter((f) => Boolean(f.residue_lot_id)).length;
   const cleared = fields.filter(f => ['CLEARED_PENDING_AUDIT', 'VERIFIED_NON_BURN'].includes(f.status)).length;
 
+  // Open Check My Proof and scroll to one evidence panel once it has rendered.
+  const openReview = (anchor: string) => {
+    onNavigate('SATELLITE_AUDIT');
+    let tries = 0;
+    const timer = window.setInterval(() => {
+      const target = document.getElementById(anchor);
+      tries += 1;
+      if (target) {
+        window.clearInterval(timer);
+        window.setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 250);
+      } else if (tries > 40) {
+        window.clearInterval(timer);
+      }
+    }, 100);
+  };
+
   const workflow = [
     { n: '01', title: 'Register the field', text: 'Add the field, location and consent once.', icon: MapPinned, image: farmImage, imageAlt: 'Paddy fields in Batala, Gurdaspur, Punjab', tab: 'My Fields' },
     { n: '02', title: 'Book clearance', text: 'Request a machine and plan the job around the field deadline.', icon: CalendarDays, image: balerImage, imageAlt: 'Tractor and baler in agricultural work', tab: 'Book Clearance' },
@@ -226,10 +242,10 @@ export function CommandCenter({
           <h2>Evidence first. Impact second.</h2>
           <p>Planned residue is not treated as verified impact. NIRDHOOM keeps operator evidence, field status and supporting remote-sensing observations distinct before downstream claims are made.</p>
           <div className="home-evidence-points">
-            <span><Camera /> Photo evidence</span>
-            <span><Map /> Field geometry</span>
-            <span><Satellite /> Satellite context</span>
-            <span><CheckCircle2 /> Verification review</span>
+            <button type="button" onClick={() => openReview('review-photos')}><Camera /> Photo evidence</button>
+            <button type="button" onClick={() => openReview('review-geometry')}><Map /> Field geometry</button>
+            <button type="button" onClick={() => openReview('review-satellite')}><Satellite /> Satellite context</button>
+            <button type="button" onClick={() => openReview('review-decision')}><CheckCircle2 /> Verification review</button>
           </div>
           <button onClick={onOpenImpact} className="home-text-button">Open impact & research <ArrowRight /></button>
         </div>

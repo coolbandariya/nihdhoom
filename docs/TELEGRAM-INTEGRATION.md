@@ -17,6 +17,21 @@ Server-only:
 - TELEGRAM_MINI_APP_URL — optional HTTPS URL for the Mini App/website.
 - VITE_TELEGRAM_BOT_USERNAME — browser-safe bot username used by the website link.
 
+## Quick setup (5 minutes)
+
+1. In Telegram, message @BotFather, send /newbot and copy the token.
+2. In Vercel, set TELEGRAM_BOT_TOKEN, TELEGRAM_BOT_USERNAME, VITE_TELEGRAM_BOT_USERNAME, NIRDHOOM_PUBLIC_URL and TELEGRAM_WEBHOOK_SECRET (generate one with `npm run telegram:setup -- --new-secret`), then redeploy.
+3. Run `npm run telegram:setup -- --url https://<your-vercel-domain>`. This sets the webhook with the secret token and registers the command menu in English, Hindi and Punjabi. Use `--check` to see webhook status and `--delete` to remove it.
+
+The bot answers menus, commands and plain-word messages as soon as steps 1 to 3 are done. Account linking and private field status additionally need SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY; until then the bot says those features are unavailable instead of failing.
+
+## Conversation
+
+- Replies follow the farmer's Telegram language, or the script they type in (Gurmukhi → Punjabi, Devanagari → Hindi). /language switches it.
+- Farmers can type plain words instead of commands: "machine", "ਮਸ਼ੀਨ ਕਿੱਥੇ ਹੈ", "पराली बुक करनी है", "proof", "market".
+- Every answer carries a button that opens the matching NIRDHOOM page (Mini App when TELEGRAM_MINI_APP_URL is set, otherwise NIRDHOOM_PUBLIC_URL).
+- Copy lives in api/_lib/telegramCopy.ts so it can be reviewed and translated without touching request handling.
+
 ## Webhook
 
 Production endpoint:

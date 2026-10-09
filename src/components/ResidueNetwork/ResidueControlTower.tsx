@@ -78,7 +78,7 @@ export function ResidueControlTower({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <div className="ui-eyebrow">Dispatcher queue</div>
-              <h2 className="mt-1 font-[family-name:var(--font-display)] text-[22px] font-semibold text-[var(--ink)]">What needs attention now?</h2>
+              <h2 className="mt-1 font-[family-name:var(--font-display)] text-[22px] font-bold text-[var(--ink)]">What needs attention now?</h2>
             </div>
             <div className="ui-seg">
               {[

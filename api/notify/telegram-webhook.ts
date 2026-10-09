@@ -1,3 +1,5 @@
+import { ACTION_VIEW, BOT_LANGS, COPY, detectLang, isLang, routeText, type BotAction, type BotLang } from '../_lib/telegramCopy';
+
 declare const process: { env: Record<string, string | undefined> };
 
 const TELEGRAM_API = () => {
@@ -21,10 +23,24 @@ async function sendMessage(chatId: number, text: string, replyMarkup?: unknown) 
   return telegram('sendMessage', { chat_id: chatId, text, reply_markup: replyMarkup });
 }
 
+// Best-effort in-memory dedupe for deployments that have not connected Supabase yet.
+// Telegram retries an update until it gets a 2xx, so without this a cold bot could double-reply.
+const recentUpdates = new Set<number>();
+function claimInMemory(updateId: number) {
+  if (recentUpdates.has(updateId)) return 'duplicate' as const;
+  recentUpdates.add(updateId);
+  if (recentUpdates.size > 500) recentUpdates.delete(recentUpdates.values().next().value as number);
+  return 'claimed' as const;
+}
+
+function persistenceConfigured() {
+  return Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY && process.env.SUPABASE_URL);
+}
+
 async function claimTelegramUpdate(updateId: number) {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const supabaseUrl = process.env.SUPABASE_URL;
-  if (!serviceKey || !supabaseUrl) return 'unavailable' as const;
+  if (!serviceKey || !supabaseUrl) return claimInMemory(updateId);
   const response = await fetch(`${supabaseUrl}/rest/v1/telegram_webhook_updates`, {
     method: 'POST',
     headers: {
@@ -109,60 +125,87 @@ function miniAppUrl(view?: string) {
   }
 }
 
-function actionButton(text: string, view: string) {
-  const url = miniAppUrl(view);
-  return url ? { inline_keyboard: [[{ text, web_app: { url } }]] } : undefined;
+function siteUrl(action: string) {
+  const route = ACTION_VIEW[action] || ACTION_VIEW.status;
+  const mini = miniAppUrl(route.view);
+  if (mini) return { web_app: { url: mini } } as const;
+  const raw = process.env.NIRDHOOM_PUBLIC_URL || process.env.TELEGRAM_MINI_APP_URL;
+  if (!raw) return null;
+  try {
+    const url = new URL(raw);
+    url.hash = route.hash;
+    return { url: url.toString() } as const;
+  } catch {
+    return null;
+  }
 }
 
-function menu() {
+function actionButton(text: string, action: string) {
+  const target = siteUrl(action);
+  return target ? [{ text, ...target }] : null;
+}
+
+function languageRow(lang: BotLang) {
+  const labels: Record<BotLang, string> = { pa: 'ਪੰਜਾਬੀ', hi: 'हिंदी', en: 'English' };
+  return BOT_LANGS.map((code) => ({ text: `${code === lang ? '● ' : ''}${labels[code]}`, callback_data: `lang:${code}` }));
+}
+
+function menu(lang: BotLang, withOpen = true) {
+  const b = COPY[lang].buttons;
   const rows: Array<Array<Record<string, unknown>>> = [
-    [{ text: '🌾 My fields', callback_data: 'fields' }, { text: '🚜 Book clearance', callback_data: 'book' }],
-    [{ text: '📍 Track machine', callback_data: 'track' }, { text: '🧾 Verification', callback_data: 'verify' }],
-    [{ text: '🌱 Residue market', callback_data: 'market' }, { text: '📊 My status', callback_data: 'status' }],
+    [{ text: b.fields, callback_data: `fields:${lang}` }, { text: b.book, callback_data: `book:${lang}` }],
+    [{ text: b.track, callback_data: `track:${lang}` }, { text: b.verify, callback_data: `verify:${lang}` }],
+    [{ text: b.market, callback_data: `market:${lang}` }, { text: b.status, callback_data: `status:${lang}` }],
   ];
-  const url = miniAppUrl();
-  if (url) rows.push([{ text: '📱 Open NIRDHOOM', web_app: { url } }]);
+  const open = withOpen ? actionButton(b.open, 'status') : null;
+  if (open) rows.push(open);
+  rows.push(languageRow(lang));
   return { inline_keyboard: rows };
 }
 
-async function handleAction(chatId: number, action: string) {
-  const identity = await getLinkedProfile(chatId);
-  const status = identity?.profile_id ? await getFarmerStatus(identity.profile_id) : null;
-  const open = (label: string, view: string) => actionButton(label, view);
+/** Reply keyboard for one action: an "open in NIRDHOOM" button when a site URL is configured, then the menu. */
+function actionMarkup(lang: BotLang, action: keyof typeof ACTION_VIEW) {
+  const base = menu(lang, false);
+  const label = COPY[lang].open[action as keyof typeof COPY.en.open];
+  const open = label ? actionButton(label, action) : null;
+  return open ? { inline_keyboard: [open, ...base.inline_keyboard] } : base;
+}
 
-  const answers: Record<string, { text: string; markup?: unknown }> = {
-    fields: {
-      text: status
-        ? `🌾 Your NIRDHOOM fields\n\nRegistered: ${status.fieldCount}\nActive operations: ${status.activeCount}\nVerified fields: ${status.verifiedCount}${status.latest ? `\nLatest field: ${status.latest.village || status.latest.external_id || 'registered field'} — ${String(status.latest.status).replaceAll('_', ' ').toLowerCase()}` : ''}`
-        : '🌾 Link your NIRDHOOM account first to see your private field status.',
-      markup: open('Open My Fields', 'fields'),
-    },
-    book: {
-      text: identity ? '🚜 Start a clearance request from your linked NIRDHOOM account. The booking screen will show only the fields and capacity checks available to your account.' : '🚜 Link your NIRDHOOM account first, then start a clearance request.',
-      markup: open('Book clearance', 'booking'),
-    },
-    track: {
-      text: identity ? '📍 Machine tracking uses authenticated operator telemetry. A stale reading is shown as stale rather than treated as current.' : '📍 Link your NIRDHOOM account first to see field-scoped tracking.',
-      markup: open('Track operation', 'tracking'),
-    },
-    verify: {
-      text: '🧾 Verification combines field provenance, operator evidence and supporting remote-sensing observations. A missing satellite detection is not proof that no burning occurred.',
-      markup: open('Review evidence', 'verification'),
-    },
-    market: {
-      text: '🌱 Only residue that passes the required verification and pooling gates should enter a buyer pathway. A buyer need is not a contract.',
-      markup: open('Open residue market', 'market'),
-    },
-    status: {
-      text: status
-        ? `📊 NIRDHOOM status\n\nFields: ${status.fieldCount}\nActive operations: ${status.activeCount}\nVerified fields: ${status.verifiedCount}`
-        : '📊 No linked farmer account was found. Use NIRDHOOM on the web to securely connect Telegram.',
-      markup: open('Open NIRDHOOM', ''),
-    },
+async function handleAction(chatId: number, action: BotAction, lang: BotLang) {
+  const t = COPY[lang];
+  if (action === 'help') {
+    await sendMessage(chatId, t.help, menu(lang));
+    return;
+  }
+  if (action === 'language') {
+    await sendMessage(chatId, t.languagePrompt, { inline_keyboard: [languageRow(lang)] });
+    return;
+  }
+
+  const accountFeatures = persistenceConfigured();
+  const identity = accountFeatures ? await getLinkedProfile(chatId).catch(() => null) : null;
+  const status = identity?.profile_id ? await getFarmerStatus(identity.profile_id).catch(() => null) : null;
+  const latest = status?.latest
+    ? `${status.latest.village || status.latest.external_id || 'field'} — ${String(status.latest.status).replaceAll('_', ' ').toLowerCase()}`
+    : undefined;
+
+  const text: Record<Exclude<BotAction, 'help' | 'language'>, string> = {
+    fields: status ? t.fields({ ...status, latest }) : t.fieldsUnlinked,
+    book: t.book(Boolean(identity)),
+    track: t.track(Boolean(identity)),
+    verify: t.verify,
+    market: t.market,
+    status: status ? t.status(status) : t.statusUnlinked,
   };
+  const needsAccount = ['fields', 'book', 'track', 'status'].includes(action);
+  const suffix = needsAccount && !accountFeatures ? `\n\n${t.basicMode}` : needsAccount && !identity ? `\n\n${t.linkFirst}` : '';
+  await sendMessage(chatId, text[action as keyof typeof text] + suffix, actionMarkup(lang, action));
+}
 
-  const answer = answers[action] || { text: 'NIRDHOOM Sathi can help with fields, clearance, tracking, verification and residue.' };
-  await sendMessage(chatId, answer.text, answer.markup || menu());
+function parseCallback(data: string, fallback: BotLang): { kind: 'lang' | 'action'; value: string; lang: BotLang } {
+  const [head, tail] = String(data || '').split(':');
+  if (head === 'lang' && isLang(tail)) return { kind: 'lang', value: tail, lang: tail };
+  return { kind: 'action', value: head || 'status', lang: isLang(tail) ? tail : fallback };
 }
 
 async function handle(request: Request) {
@@ -190,51 +233,54 @@ async function handle(request: Request) {
   const chatId = Number(message?.chat?.id ?? callback?.message?.chat?.id);
   if (!Number.isSafeInteger(chatId)) return Response.json({ received: true, ignored: true, update_id: updateId });
 
+  const text = String(message?.text || message?.caption || '').trim();
+  const userLang = detectLang(message?.from?.language_code ?? callback?.from?.language_code, text);
+
   if (callback?.id) {
+    const parsed = parseCallback(String(callback.data || ''), userLang);
     await telegram('answerCallbackQuery', { callback_query_id: callback.id, text: 'NIRDHOOM Sathi' });
-    await handleAction(chatId, String(callback.data || 'status'));
-    return Response.json({ ok: true, update_id: updateId });
+    if (parsed.kind === 'lang') {
+      await sendMessage(chatId, `${COPY[parsed.lang].languageSet}\n\n${COPY[parsed.lang].menuTitle}`, menu(parsed.lang));
+      return Response.json({ ok: true, update_id: updateId, lang: parsed.lang });
+    }
+    const action = (['fields', 'book', 'track', 'verify', 'market', 'status', 'help', 'language'] as const).includes(parsed.value as BotAction)
+      ? (parsed.value as BotAction)
+      : 'status';
+    await handleAction(chatId, action, parsed.lang);
+    return Response.json({ ok: true, update_id: updateId, action });
   }
 
-  const text = String(message?.text || '').trim();
   const firstName = String(message?.from?.first_name || 'farmer');
+  const t = COPY[userLang];
 
   if (/^\/start(?:\s|$)/i.test(text)) {
     const startPayload = text.replace(/^\/start/i, '').trim();
     if (startPayload) {
-      const linkedProfile = await linkTelegramIdentity(startPayload, message);
+      const linkedProfile = persistenceConfigured() ? await linkTelegramIdentity(startPayload, message).catch(() => null) : null;
       if (linkedProfile) {
-        await sendMessage(chatId, '✅ Telegram is securely linked to your NIRDHOOM farmer profile. Your private field status can now be shown here.', menu());
+        await sendMessage(chatId, t.linked, menu(userLang));
         return Response.json({ ok: true, update_id: updateId, linked: true });
       }
-      await sendMessage(chatId, 'This linking link is invalid or expired. Start a new link from your authenticated NIRDHOOM account.', menu());
+      await sendMessage(chatId, t.linkInvalid, menu(userLang));
       return Response.json({ ok: true, update_id: updateId, linked: false });
     }
-    await sendMessage(
-      chatId,
-      `ਸਤ ਸ੍ਰੀ ਅਕਾਲ / नमस्ते ${firstName}! 🌾\n\nI’m NIRDHOOM Sathi. Use the buttons below for fields, clearance, tracking, verification and residue pathways. Live capacity and operational status are only reported from authenticated NIRDHOOM records.`,
-      menu(),
-    );
-    return Response.json({ ok: true, update_id: updateId });
-  }
-
-  if (/^\/(help|menu)/i.test(text)) {
-    await sendMessage(chatId, 'NIRDHOOM Sathi menu:', menu());
-    return Response.json({ ok: true, update_id: updateId });
-  }
-
-  const command = text.match(/^\/(status|fields|book|track|verify|market)\\b/i)?.[1]?.toLowerCase();
-  if (command) {
-    await handleAction(chatId, command === 'fields' ? 'fields' : command);
+    await sendMessage(chatId, t.welcome(firstName), menu(userLang));
     return Response.json({ ok: true, update_id: updateId });
   }
 
   if (message?.photo?.length) {
-    await sendMessage(chatId, '📷 Photo received. It is not treated as verification evidence until NIRDHOOM can associate it with an authenticated job/operator record.');
-    return Response.json({ ok: true, update_id: updateId });
+    const identity = persistenceConfigured() ? await getLinkedProfile(chatId).catch(() => null) : null;
+    await sendMessage(chatId, t.photo(Boolean(identity)), menu(userLang));
+    return Response.json({ ok: true, update_id: updateId, photo: true });
   }
 
-  await sendMessage(chatId, 'I can help with NIRDHOOM field operations. Choose an action below.', menu());
+  const action = routeText(text);
+  if (action) {
+    await handleAction(chatId, action, userLang);
+    return Response.json({ ok: true, update_id: updateId, action });
+  }
+
+  await sendMessage(chatId, t.unknown, menu(userLang));
   return Response.json({ ok: true, update_id: updateId });
 }
 
@@ -246,9 +292,14 @@ export default async function handler(req: any, res: any) {
       && process.env.SUPABASE_URL
       && process.env.SUPABASE_SERVICE_ROLE_KEY
     );
+    // bot_ready: commands, menus and languages work. account_features: linking and private field status.
+    const botReady = Boolean(process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_WEBHOOK_SECRET);
     return res.status(configured ? 200 : 503).json({
       ok: configured,
       configured,
+      bot_ready: botReady,
+      account_features: persistenceConfigured(),
+      bot_username: process.env.TELEGRAM_BOT_USERNAME || null,
       service: 'nirdhoom-telegram-webhook',
     });
   }

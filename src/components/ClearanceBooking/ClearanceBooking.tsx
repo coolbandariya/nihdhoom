@@ -153,7 +153,7 @@ export function ClearanceBooking({ fields, demoMode, onBooked }: Props) {
           </div>
           <div className="mt-6 rounded-2xl border border-[var(--wheat-line)] bg-[var(--surface)] p-4 shadow-sm">
             <span className="ui-kv-label block">{demoMode ? 'Example estimate' : 'Server quote'}</span>
-            <strong className="mt-1 block font-[family-name:var(--font-display)] text-[30px] font-semibold leading-tight text-[var(--ink)]">{demoMode ? `₹${estimate.toLocaleString()}` : 'Shown after booking'}</strong>
+            <strong className="mt-1 block font-[family-name:var(--font-display)] text-[30px] font-bold leading-tight text-[var(--ink)]">{demoMode ? `₹${estimate.toLocaleString()}` : 'Shown after booking'}</strong>
             <span className="text-[12px] text-[var(--muted)]">{demoMode ? 'Example only · no payment is made' : 'Authoritative quote comes from the server'}</span>
           </div>
         </aside>

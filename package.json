@@ -10,7 +10,8 @@
     "audit": "node scripts_validate.mjs && node scripts_integrity_validate.mjs",
     "syntaxcheck": "tsc -b",
     "test": "node --test tests/*.test.mjs",
-    "release:check": "npm run syntaxcheck && npm run audit && npm test && npm run build"
+    "release:check": "npm run syntaxcheck && npm run audit && npm test && npm run build",
+    "telegram:setup": "node scripts/telegram-setup.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.57.0",

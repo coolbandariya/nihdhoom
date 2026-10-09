@@ -261,7 +261,7 @@ export const FarmerOnboarding: React.FC = () => {
           <div className="farmer-onboarding-stepper tone-native ui-card lg:sticky lg:top-24">
             <div className="px-1 pb-3">
               <h4 className="ui-eyebrow">Onboarding progress</h4>
-              <p className="mt-2 font-[family-name:var(--font-display)] text-[22px] font-semibold leading-tight text-[var(--ink)]">{STEPS[stepIndex]?.label}</p>
+              <p className="mt-2 font-[family-name:var(--font-display)] text-[22px] font-bold leading-tight text-[var(--ink)]">{STEPS[stepIndex]?.label}</p>
               <p className="mt-1 text-[13px] text-[var(--muted)]">{STEPS[stepIndex]?.sublabel}</p>
             </div>
             <Stepper

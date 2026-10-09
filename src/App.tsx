@@ -349,6 +349,7 @@ export function App() {
                     demoMode={demoMode}
                     onSelectField={handleSelectField}
                     activeRoutePolyline={activeRoutePolyline}
+                    defaultFieldListOpen
                   />
 
                   {selectedField && (
@@ -413,7 +414,7 @@ export function App() {
             fields={fields}
             fireEvents={fireEvents}
             demoMode={demoMode}
-            onVerified={() => { void refreshLiveData(); }}
+            onVerified={(fieldId) => { if (demoMode) handleUpdateFieldStatus(fieldId, 'VERIFIED_NON_BURN'); else void refreshLiveData(); }}
           />
         )}
 

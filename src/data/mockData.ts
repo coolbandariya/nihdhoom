@@ -101,10 +101,10 @@ export const INITIAL_FIELDS: Field[] = [
     is_verified_non_burn: true,
     center: { lat: 30.2285, lng: 75.8214 },
     geometry: [
-      { lat: 30.2310, lng: 75.8185 },
-      { lat: 30.2315, lng: 75.8240 },
-      { lat: 30.2260, lng: 75.8245 },
-      { lat: 30.2255, lng: 75.8190 },
+      { lat: 30.22902, lng: 75.8208 },
+      { lat: 30.22913, lng: 75.82194 },
+      { lat: 30.22798, lng: 75.82205 },
+      { lat: 30.22787, lng: 75.8209 },
     ],
   },
   {
@@ -126,10 +126,10 @@ export const INITIAL_FIELDS: Field[] = [
     payout_amount: 6750,
     center: { lat: 30.1264, lng: 75.8115 },
     geometry: [
-      { lat: 30.1290, lng: 75.8080 },
-      { lat: 30.1300, lng: 75.8150 },
-      { lat: 30.1235, lng: 75.8155 },
-      { lat: 30.1230, lng: 75.8085 },
+      { lat: 30.12694, lng: 75.81078 },
+      { lat: 30.12715, lng: 75.81222 },
+      { lat: 30.1258, lng: 75.81233 },
+      { lat: 30.1257, lng: 75.81088 },
     ],
   },
   {
@@ -153,10 +153,10 @@ export const INITIAL_FIELDS: Field[] = [
     payout_amount: 3625,
     center: { lat: 30.3540, lng: 75.8520 },
     geometry: [
-      { lat: 30.3565, lng: 75.8500 },
-      { lat: 30.3570, lng: 75.8555 },
-      { lat: 30.3515, lng: 75.8550 },
-      { lat: 30.3510, lng: 75.8495 },
+      { lat: 30.35444, lng: 75.85164 },
+      { lat: 30.35453, lng: 75.85262 },
+      { lat: 30.35356, lng: 75.85253 },
+      { lat: 30.35347, lng: 75.85156 },
     ],
   },
   {
@@ -181,10 +181,10 @@ export const INITIAL_FIELDS: Field[] = [
     is_verified_non_burn: true,
     center: { lat: 30.2680, lng: 76.0350 },
     geometry: [
-      { lat: 30.2710, lng: 76.0315 },
-      { lat: 30.2715, lng: 76.0385 },
-      { lat: 30.2650, lng: 76.0390 },
-      { lat: 30.2645, lng: 76.0320 },
+      { lat: 30.26856, lng: 76.03435 },
+      { lat: 30.26865, lng: 76.03565 },
+      { lat: 30.26744, lng: 76.03575 },
+      { lat: 30.26735, lng: 76.03444 },
     ],
   },
   {
@@ -209,10 +209,10 @@ export const INITIAL_FIELDS: Field[] = [
     is_verified_non_burn: true,
     center: { lat: 30.2610, lng: 75.8910 },
     geometry: [
-      { lat: 30.2640, lng: 75.8870 },
-      { lat: 30.2650, lng: 75.8950 },
-      { lat: 30.2580, lng: 75.8955 },
-      { lat: 30.2575, lng: 75.8875 },
+      { lat: 30.26161, lng: 75.89018 },
+      { lat: 30.26182, lng: 75.89182 },
+      { lat: 30.26039, lng: 75.89192 },
+      { lat: 30.26028, lng: 75.89028 },
     ],
   },
 ];

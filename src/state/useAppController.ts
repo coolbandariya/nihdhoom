@@ -6,7 +6,7 @@ import { supabase } from '../lib/supabase';
 import { normalizeField } from '../lib/domain';
 
 const DEMO_MODE = import.meta.env.VITE_NIRDHOOM_DEMO_MODE === 'true';
-const DEMO_STATE_KEY = 'nirdhoom.demo.state.v2';
+const DEMO_STATE_KEY = 'nirdhoom.demo.state.v3';
 
 type DemoState = { fields: Field[]; machines: Machine[]; fireEvents: BurnEvent[] };
 

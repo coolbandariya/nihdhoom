@@ -164,7 +164,7 @@ export function HarvestIntelligence({ fields, machines, demoMode }: Props) {
             <span className="grid h-11 w-11 place-items-center rounded-xl bg-[var(--surface)] text-[var(--brand)] shadow-sm"><CalendarDays className="h-5 w-5" /></span>
             <div>
               <div className="ui-kv-label">Planning horizon</div>
-              <div className="font-[family-name:var(--font-display)] text-[26px] font-semibold leading-tight text-[var(--ink)]">{dateLabel}</div>
+              <div className="font-[family-name:var(--font-display)] text-[26px] font-bold leading-tight text-[var(--ink)]">{dateLabel}</div>
             </div>
           </div>
           <div className="ui-chip">
@@ -194,7 +194,7 @@ export function HarvestIntelligence({ fields, machines, demoMode }: Props) {
             <div className="ui-eyebrow is-sky">
               <ShieldCheck className="h-4 w-4" /> Weather-aware operations
             </div>
-            <h2 className="mt-2 font-[family-name:var(--font-display)] text-[22px] font-semibold text-[var(--ink)]">Should the fleet move this window?</h2>
+            <h2 className="mt-2 font-[family-name:var(--font-display)] text-[22px] font-bold text-[var(--ink)]">Should the fleet move this window?</h2>
             <p className="ui-card-sub">
               Live mode reads Open-Meteo through the authenticated weather adapter for the selected field. It informs planning; it does not guarantee machine access or harvest conditions.
             </p>
@@ -277,7 +277,7 @@ export function HarvestIntelligence({ fields, machines, demoMode }: Props) {
                       <div className="text-[12px] text-[var(--muted)]">{data.fields} field(s) · {[...data.varieties].join(', ') || 'Variety not recorded'}</div>
                     </div>
                     <div className="text-right">
-                      <div className="font-[family-name:var(--font-display)] text-[18px] font-semibold text-[var(--brand-ink)]">{data.acres.toFixed(1)} ac</div>
+                      <div className="font-[family-name:var(--font-display)] text-[18px] font-bold text-[var(--brand-ink)]">{data.acres.toFixed(1)} ac</div>
                       <div className="text-[12px] text-[var(--muted)]">{share}% of window</div>
                     </div>
                   </div>
@@ -297,7 +297,7 @@ export function HarvestIntelligence({ fields, machines, demoMode }: Props) {
           </div>
           <div className="mt-4 rounded-2xl border border-[var(--wheat-line)] bg-[var(--surface)] p-4">
             <div className="ui-kv-label">Recommended active machines</div>
-            <div className="mt-1 font-[family-name:var(--font-display)] text-[44px] font-semibold leading-none text-[var(--ink)]">{recommended || '—'}</div>
+            <div className="mt-1 font-[family-name:var(--font-display)] text-[44px] font-bold leading-none text-[var(--ink)]">{recommended || '—'}</div>
             <div className="mt-2 text-[13px] text-[var(--muted)]">
               {utilization > 100 ? 'Capacity shortfall detected — escalate to dispatch.' : utilization > 80 ? 'High pressure — pre-position before the window opens.' : 'Capacity currently appears sufficient.'}
             </div>
