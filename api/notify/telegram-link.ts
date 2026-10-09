@@ -1,5 +1,6 @@
+/// <reference types="node" />
 import { createHash, randomBytes } from 'node:crypto';
-import { rateLimit } from '../_lib/rateLimit';
+import { rateLimit } from '../_lib/rateLimit.js';
 
 declare const process: { env: Record<string, string | undefined> };
 
