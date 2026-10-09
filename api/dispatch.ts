@@ -95,21 +95,21 @@ function validSolverPlan(plan: any, fields: Point[], machines: Machine[]) {
 async function verifyRole(req: any, roles: string[]) {
   const auth = String(req.headers?.authorization || '');
   const token = auth.startsWith('Bearer ') ? auth.slice(7).trim() : '';
-  if (!token || !process.env.SUPABASE_URL || !process.env.SUPABASE_PUBLISHABLE_KEY) {
+  if (!token || !(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL) || !(process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY)) {
     return { ok: false as const, status: 401, error: 'Authentication required' };
   }
 
   try {
-    const userResponse = await fetch(`${process.env.SUPABASE_URL}/auth/v1/user`, {
-      headers: { apikey: process.env.SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${token}` },
+    const userResponse = await fetch(`${(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL)}/auth/v1/user`, {
+      headers: { apikey: (process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY), Authorization: `Bearer ${token}` },
       signal: AbortSignal.timeout(8000),
     });
     if (!userResponse.ok) return { ok: false as const, status: 401, error: 'Invalid session' };
     const user = await userResponse.json();
     const profileResponse = await fetch(
-      `${process.env.SUPABASE_URL}/rest/v1/profiles?id=eq.${encodeURIComponent(user.id)}&select=role`,
+      `${(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL)}/rest/v1/profiles?id=eq.${encodeURIComponent(user.id)}&select=role`,
       {
-        headers: { apikey: process.env.SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${token}` },
+        headers: { apikey: (process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY), Authorization: `Bearer ${token}` },
         signal: AbortSignal.timeout(8000),
       },
     );

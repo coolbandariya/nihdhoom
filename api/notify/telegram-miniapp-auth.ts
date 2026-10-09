@@ -1,5 +1,6 @@
+/// <reference types="node" />
 import { createHmac, createHash } from 'node:crypto';
-import { rateLimit } from '../_lib/rateLimit';
+import { rateLimit } from '../_lib/rateLimit.js';
 
 declare const process: { env: Record<string, string | undefined> };
 
@@ -55,7 +56,7 @@ export default async function handler(req: any, res: any) {
   if (!verified) return res.status(401).json({ error: 'Invalid or expired Telegram Mini App identity' });
 
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseUrl = ((process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL) || process.env.VITE_SUPABASE_URL);
   if (!serviceKey || !supabaseUrl) return res.status(503).json({ error: 'Server identity service is not configured' });
 
   const response = await fetch(

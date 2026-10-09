@@ -1,5 +1,6 @@
+/// <reference types="node" />
 import { createHash, randomBytes } from 'node:crypto';
-import { rateLimit } from '../_lib/rateLimit';
+import { rateLimit } from '../_lib/rateLimit.js';
 
 declare const process: { env: Record<string, string | undefined> };
 
@@ -9,9 +10,9 @@ function bearer(req: any) {
 }
 
 async function getUser(accessToken: string) {
-  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_PUBLISHABLE_KEY || !accessToken) return null;
-  const response = await fetch(`${process.env.SUPABASE_URL}/auth/v1/user`, {
-    headers: { apikey: process.env.SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${accessToken}` },
+  if (!(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL) || !(process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY) || !accessToken) return null;
+  const response = await fetch(`${(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL)}/auth/v1/user`, {
+    headers: { apikey: (process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY), Authorization: `Bearer ${accessToken}` },
     signal: AbortSignal.timeout(8000),
   });
   if (!response.ok) return null;
@@ -20,8 +21,8 @@ async function getUser(accessToken: string) {
 
 async function supabaseRpc(tokenHash: string, profileId: string, expiresAt: string) {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!serviceKey || !process.env.SUPABASE_URL) return false;
-  const response = await fetch(`${process.env.SUPABASE_URL}/rest/v1/telegram_link_tokens`, {
+  if (!serviceKey || !(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL)) return false;
+  const response = await fetch(`${(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL)}/rest/v1/telegram_link_tokens`, {
     method: 'POST',
     headers: {
       apikey: serviceKey,

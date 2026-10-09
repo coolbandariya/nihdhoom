@@ -3,7 +3,7 @@ import { rateLimit } from './_lib/rateLimit';
 
 async function readLiveField(base:string, token:string, fieldId:string){
   const url=`${base}/rest/v1/fields?id=eq.${encodeURIComponent(fieldId)}&select=id,external_id,khasra_no,village,block,district,acreage,crop,variety,expected_harvest_date,clearance_deadline,status,moisture_pct,center_lat,center_lng`;
-  const r=await fetch(url,{headers:{apikey:process.env.SUPABASE_PUBLISHABLE_KEY||'',Authorization:`Bearer ${token}`},signal:AbortSignal.timeout(8000)});
+  const r=await fetch(url,{headers:{apikey:((process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY) || process.env.VITE_SUPABASE_PUBLISHABLE_KEY)||'',Authorization:`Bearer ${token}`},signal:AbortSignal.timeout(8000)});
   if(!r.ok)return null;const data=await r.json();return data?.[0]||null;
 }
 
@@ -38,11 +38,11 @@ export default async function handler(req:any,res:any){
   const aiConfigured=Boolean(process.env.GROQ_API_KEY||process.env.OPENAI_API_KEY);
   const authRequired=process.env.REQUIRE_AUTH_FOR_AI==='true'||aiConfigured||Boolean(field?.dbId);
   if(authRequired){
-    if(!token||!process.env.SUPABASE_URL||!process.env.SUPABASE_PUBLISHABLE_KEY)return res.status(401).json({error:'Authentication required'});
-    try{const verify=await fetch(`${process.env.SUPABASE_URL}/auth/v1/user`,{headers:{apikey:process.env.SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${token}`},signal:AbortSignal.timeout(8000)});if(!verify.ok)return res.status(401).json({error:'Invalid session'})}catch{return res.status(401).json({error:'Authentication check failed'})}
+    if(!token||!((process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL) || process.env.VITE_SUPABASE_URL)||!((process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY) || process.env.VITE_SUPABASE_PUBLISHABLE_KEY))return res.status(401).json({error:'Authentication required'});
+    try{const verify=await fetch(`${((process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL) || process.env.VITE_SUPABASE_URL)}/auth/v1/user`,{headers:{apikey:((process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY) || process.env.VITE_SUPABASE_PUBLISHABLE_KEY),Authorization:`Bearer ${token}`},signal:AbortSignal.timeout(8000)});if(!verify.ok)return res.status(401).json({error:'Invalid session'})}catch{return res.status(401).json({error:'Authentication check failed'})}
   }
   let liveField=null;
-  if(token&&process.env.SUPABASE_URL&&field?.dbId)liveField=await readLiveField(process.env.SUPABASE_URL,token,String(field.dbId));
+  if(token&&((process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL) || process.env.VITE_SUPABASE_URL)&&field?.dbId)liveField=await readLiveField(((process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL) || process.env.VITE_SUPABASE_URL),token,String(field.dbId));
   const source=liveField||(field?.dbId?{}:(field||{}));
   const safeField={id:source.id||'',village:typeof source.village==='string'?source.village:'',block:typeof source.block==='string'?source.block:'',acres:Number(source.acreage??source.acres??0),variety:typeof source.variety==='string'?source.variety:'',crop:typeof source.crop==='string'?source.crop:'Paddy',status:typeof source.status==='string'?source.status:'',machine:typeof source.machine==='string'?source.machine:'',payout:Number(source.payout||0),harvest:source.expected_harvest_date||source.harvest||'',deadline:source.clearance_deadline||source.deadline||''};
   try{
