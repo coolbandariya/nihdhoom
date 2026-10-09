@@ -9,11 +9,11 @@ function json(res: any, status: number, body: unknown) {
 async function authenticate(req: any) {
   const auth = String(req.headers?.authorization || '');
   const token = auth.startsWith('Bearer ') ? auth.slice(7).trim() : '';
-  if (!token || !process.env.SUPABASE_URL || !process.env.SUPABASE_PUBLISHABLE_KEY) return null;
+  if (!token || !(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL) || !(process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY)) return null;
   try {
-    const response = await fetch(`${process.env.SUPABASE_URL}/auth/v1/user`, {
+    const response = await fetch(`${(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL)}/auth/v1/user`, {
       headers: {
-        apikey: process.env.SUPABASE_PUBLISHABLE_KEY,
+        apikey: (process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY),
         Authorization: `Bearer ${token}`,
       },
       signal: AbortSignal.timeout(8000),
@@ -45,10 +45,10 @@ export default async function handler(req: any, res: any) {
   if (!/^[0-9a-f-]{36}$/i.test(fieldId)) return json(res, 400, { error: 'field_id must be a UUID' });
 
   const fieldResponse = await fetch(
-    `${process.env.SUPABASE_URL}/rest/v1/fields?id=eq.${encodeURIComponent(fieldId)}&select=id,owner_id,center_lat,center_lng,boundary_geojson`,
+    `${(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL)}/rest/v1/fields?id=eq.${encodeURIComponent(fieldId)}&select=id,owner_id,center_lat,center_lng,boundary_geojson`,
     {
       headers: {
-        apikey: process.env.SUPABASE_PUBLISHABLE_KEY!,
+        apikey: (process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY)!,
         Authorization: `Bearer ${String(req.headers.authorization)}`,
       },
       signal: AbortSignal.timeout(8000),
@@ -83,7 +83,7 @@ export default async function handler(req: any, res: any) {
   const payload = await weatherResponse.json();
 
   if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    await fetch(`${process.env.SUPABASE_URL}/rest/v1/weather_snapshots`, {
+    await fetch(`${(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL)}/rest/v1/weather_snapshots`, {
       method: 'POST',
       headers: {
         apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
