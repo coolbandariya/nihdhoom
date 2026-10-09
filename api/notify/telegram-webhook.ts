@@ -1,4 +1,4 @@
-import { ACTION_VIEW, BOT_LANGS, COPY, detectLang, isLang, routeText, type BotAction, type BotLang } from '../_lib/telegramCopy';
+import { ACTION_VIEW, BOT_LANGS, COPY, detectLang, isLang, routeText, type BotAction, type BotLang } from '../_lib/telegramCopy.js';
 
 declare const process: { env: Record<string, string | undefined> };
 
@@ -167,7 +167,7 @@ function menu(lang: BotLang, withOpen = true) {
 function actionMarkup(lang: BotLang, action: keyof typeof ACTION_VIEW) {
   const base = menu(lang, false);
   const label = COPY[lang].open[action as keyof typeof COPY.en.open];
-  const open = label ? actionButton(label, action) : null;
+  const open = label ? actionButton(label, String(action)) : null;
   return open ? { inline_keyboard: [open, ...base.inline_keyboard] } : base;
 }
 
