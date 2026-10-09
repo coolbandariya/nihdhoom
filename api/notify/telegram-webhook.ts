@@ -34,12 +34,12 @@ function claimInMemory(updateId: number) {
 }
 
 function persistenceConfigured() {
-  return Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY && process.env.SUPABASE_URL);
+  return Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY && (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL));
 }
 
 async function claimTelegramUpdate(updateId: number) {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL);
   if (!serviceKey || !supabaseUrl) return claimInMemory(updateId);
   const response = await fetch(`${supabaseUrl}/rest/v1/telegram_webhook_updates`, {
     method: 'POST',
@@ -58,7 +58,7 @@ async function claimTelegramUpdate(updateId: number) {
 
 async function linkTelegramIdentity(token: string, message: any) {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL);
   if (!serviceKey || !supabaseUrl || !token) return null;
   const tokenHash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(token));
   const hash = Array.from(new Uint8Array(tokenHash)).map((b) => b.toString(16).padStart(2, '0')).join('');
@@ -85,7 +85,7 @@ async function linkTelegramIdentity(token: string, message: any) {
 
 async function getLinkedProfile(chatId: number) {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL);
   if (!serviceKey || !supabaseUrl) return null;
   const response = await fetch(
     `${supabaseUrl}/rest/v1/telegram_identities?telegram_chat_id=eq.${chatId}&select=profile_id,notification_enabled&limit=1`,
@@ -98,7 +98,7 @@ async function getLinkedProfile(chatId: number) {
 
 async function getFarmerStatus(profileId: string) {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL);
   if (!serviceKey || !supabaseUrl) return null;
   const headers = { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` };
   const fieldsResponse = await fetch(
@@ -289,7 +289,7 @@ export default async function handler(req: any, res: any) {
     const configured = Boolean(
       process.env.TELEGRAM_BOT_TOKEN
       && process.env.TELEGRAM_WEBHOOK_SECRET
-      && process.env.SUPABASE_URL
+      && (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL)
       && process.env.SUPABASE_SERVICE_ROLE_KEY
     );
     // bot_ready: commands, menus and languages work. account_features: linking and private field status.
