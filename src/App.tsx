@@ -1,3 +1,4 @@
+import { describeLiveError } from './lib/liveStatus';
 import { lazy, Suspense, useEffect, useCallback, startTransition } from 'react';
 import { Header, ActiveTab } from './components/Header';
 const OpsMap = lazy(() => import('./components/OpsConsole/OpsMap').then((m) => ({ default: m.OpsMap })));
@@ -214,6 +215,8 @@ export function App() {
     demoMode,
     loadingLiveData,
     liveDataError,
+    liveSignedOut,
+    liveConfigured,
     residueLots,
     buyers: liveBuyers,
     storageYards: liveStorageYards,
@@ -238,8 +241,30 @@ export function App() {
         demoMode={demoMode}
       />
 
-      {!demoMode && loadingLiveData && <div className="live-state-banner live-state-banner-loading" role="status">Loading live operational records…</div>}
-      {!demoMode && liveDataError && <div className="live-state-banner live-state-banner-error" role="alert">Live data unavailable: {liveDataError}</div>}
+      {!demoMode && !liveConfigured && (
+        <div className="live-state-banner live-state-banner-error" role="alert">
+          <strong>This deployment is not connected to a database.</strong>
+          <span>Add VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in Vercel for the environment that built this page, then redeploy.</span>
+        </div>
+      )}
+      {!demoMode && liveConfigured && loadingLiveData && <div className="live-state-banner live-state-banner-loading" role="status">Loading live operational records…</div>}
+      {!demoMode && liveConfigured && !loadingLiveData && liveSignedOut && (
+        <div className="live-state-banner live-state-banner-info" role="status">
+          <strong>Sign in to see live fields.</strong>
+          <span>Field and machine records are private. Use your mobile number to create or open your NIRDHOOM account.</span>
+          <button type="button" onClick={() => navigate('FARMER_KYC')}>Sign in or create account</button>
+        </div>
+      )}
+      {!demoMode && liveDataError && (() => {
+        const problem = describeLiveError(liveDataError);
+        return (
+          <div className="live-state-banner live-state-banner-error" role="alert">
+            <strong>Live data unavailable: {problem.summary}</strong>
+            <span>{problem.hint}</span>
+            <small>Technical detail: {liveDataError}</small>
+          </div>
+        );
+      })()}
 
       {/* Main Content Area */}
       <main id="main-content" className="field-main flex-1 relative z-10">
@@ -267,7 +292,7 @@ export function App() {
         )}
 
         {activeTab === 'FARMER_KYC' && (
-          <FarmerOnboarding />
+          <FarmerOnboarding onNavigate={navigate} onFieldsChanged={() => void refreshLiveData()} />
         )}
 
         {activeTab === 'RESIDUE_POOLS' && (

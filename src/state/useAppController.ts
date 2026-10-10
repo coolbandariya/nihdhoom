@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActiveTab } from '../components/Header';
 import { INITIAL_FIELDS, INITIAL_MACHINES, MOCK_FIRMS_FIRE_EVENTS } from '../data/mockData';
 import { Field, Machine, BurnEvent, LatLng, ResidueLot, Buyer, StorageYard } from '../types';
-import { supabase } from '../lib/supabase';
+import { supabase, supabaseConfigured } from '../lib/supabase';
 import { normalizeField } from '../lib/domain';
 
 const DEMO_MODE = import.meta.env.VITE_NIRDHOOM_DEMO_MODE === 'true';
@@ -70,6 +70,7 @@ export function useAppController() {
   const [selectedField, setSelectedField] = useState<Field | null>(DEMO_MODE ? demoSeed.fields[0] || null : null);
   const [loadingLiveData, setLoadingLiveData] = useState(!DEMO_MODE && Boolean(supabase));
   const [liveDataError, setLiveDataError] = useState<string | null>(null);
+  const [liveSignedOut, setLiveSignedOut] = useState(false);
   const [activeRoutePolyline, setActiveRoutePolyline] = useState<LatLng[]>([]);
   const [certificateField, setCertificateField] = useState<Field | null>(null);
 
@@ -90,6 +91,23 @@ export function useAppController() {
     setLoadingLiveData(true);
     setLiveDataError(null);
     const client = supabase;
+
+    // Operational tables are readable only by signed-in users. Say so plainly
+    // instead of surfacing a database "permission denied" to every visitor.
+    const { data: sessionData } = await client.auth.getSession();
+    if (!sessionData.session) {
+      setLiveSignedOut(true);
+      setFields([]);
+      setMachines([]);
+      setResidueLots([]);
+      setBuyers([]);
+      setStorageYards([]);
+      setSelectedField(null);
+      setLoadingLiveData(false);
+      return;
+    }
+    setLiveSignedOut(false);
+
     const [{ data: fieldRows, error: fieldError }, { data: machineRows, error: machineError }] =
       await Promise.all([
         client.from('fields').select('id,external_id,owner_id,khasra_no,village,block,district,acreage,crop,variety,expected_harvest_date,clearance_deadline,status,moisture_pct,center_lat,center_lng,geometry,boundary_geojson,boundary_source,boundary_verified,geometry_area_acres'),
@@ -213,6 +231,13 @@ export function useAppController() {
     void refreshLiveData().finally(() => { if (!active) return; });
     const client = supabase;
     if (!client) return;
+    // Reload records right after someone signs in or out. Deferred so the auth
+    // callback itself never awaits another Supabase call.
+    const { data: authSub } = client.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
+        window.setTimeout(() => { if (active) void refreshLiveData(); }, 0);
+      }
+    });
     const channel = client
       .channel('nirdhoom-live-operations', { config: { private: true } })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'fields' }, () => { void refreshLiveData(); })
@@ -221,6 +246,7 @@ export function useAppController() {
       .subscribe();
     return () => {
       active = false;
+      authSub.subscription.unsubscribe();
       void client.removeChannel(channel);
     };
   }, [refreshLiveData]);
@@ -254,6 +280,8 @@ export function useAppController() {
     demoMode: DEMO_MODE,
     loadingLiveData,
     liveDataError,
+    liveSignedOut,
+    liveConfigured: supabaseConfigured,
     activeTab,
     setActiveTab,
     fields,

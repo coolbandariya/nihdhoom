@@ -676,3 +676,47 @@ test('satellite observations remain supporting evidence and are sensor-agnostic'
   assert.match(types, /observation_role\?: 'SUPPORTING_EVIDENCE'/);
   assert.match(source, /supporting evidence only/);
 });
+
+test('live-mode setup: error classification, bundle and farmer flow are wired', async () => {
+  const status = read('src/lib/liveStatus.ts');
+  assert.match(status, /describeLiveError/);
+  assert.match(status, /describeAuthError/);
+
+  // The home banner must not show a raw database error to signed-out visitors.
+  const controller = read('src/state/useAppController.ts');
+  assert.match(controller, /getSession\(\)/);
+  assert.match(controller, /setLiveSignedOut\(true\)/);
+  assert.match(controller, /onAuthStateChange/);
+
+  // Farmers must be able to register a real field in live mode.
+  const onboarding = read('src/components/FarmerOnboarding/FarmerOnboarding.tsx');
+  assert.match(onboarding, /from\('fields'\)\s*\.insert/);
+  assert.match(onboarding, /status: 'REGISTERED'/);
+  assert.match(onboarding, /LIVE_ORDER/);
+
+  // The one-file SQL bundle must be exactly the migrations, in ledger order.
+  const { migrationOrder } = await import(`${root}/scripts/db-bundle.mjs`);
+  const names = migrationOrder(fs.readdirSync(`${root}/supabase/migrations`));
+  const bundle = read('supabase/all-migrations.sql');
+  const headers = [...bundle.matchAll(/^-- >>> (.+)$/gm)].map((m) => m[1]);
+  assert.deepEqual(headers, names, 'run `npm run db:bundle` to refresh supabase/all-migrations.sql');
+  assert.ok(names.indexOf('202610010007_nirdhoom_operational_integrity.sql') < names.indexOf('20261001_nirdhoom_database_hygiene.sql'));
+  assert.ok(names.indexOf('20261001_nirdhoom_rls_initplan_fix.sql') < names.indexOf('202610020008_nirdhoom_client_write_integrity.sql'));
+  for (const name of names) {
+    assert.ok(bundle.includes(read(`supabase/migrations/${name}`).trimEnd()), `${name} is out of date in the bundle`);
+  }
+});
+
+test('live errors are explained in plain words with a next step', async () => {
+  const { describeLiveError, describeAuthError } = await import(`${root}/src/lib/liveStatus.ts`);
+  assert.equal(describeLiveError('permission denied for table fields').kind, 'permission');
+  assert.equal(describeLiveError("Could not find the table 'public.fields' in the schema cache").kind, 'not-migrated');
+  assert.equal(describeLiveError('relation "public.fields" does not exist').kind, 'not-migrated');
+  assert.equal(describeLiveError('Invalid API key').kind, 'bad-key');
+  assert.equal(describeLiveError('TypeError: Failed to fetch').kind, 'unreachable');
+  assert.equal(describeLiveError('something odd').kind, 'unknown');
+  assert.match(describeLiveError('Invalid API key').hint, /VITE_SUPABASE_PUBLISHABLE_KEY/);
+  assert.match(describeAuthError('Unsupported phone provider', 'x'), /SMS sign-in is not switched on/);
+  assert.match(describeAuthError('Token has expired or is invalid', 'x'), /wrong or has expired/);
+  assert.equal(describeAuthError('', 'fallback'), 'fallback');
+});

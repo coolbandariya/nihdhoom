@@ -1079,6 +1079,16 @@ html[data-theme="kisan"] {
 }
 .live-state-banner-loading { background: var(--sky-soft); border-color: var(--sky-line); color: var(--sky-ink); }
 .live-state-banner-error { background: var(--ember-soft); border-color: var(--ember-line); color: var(--ember-ink); }
+.live-state-banner-info { background: var(--wheat-soft); border-color: var(--wheat-line); color: var(--wheat-ink); }
+.live-state-banner strong, .live-state-banner span, .live-state-banner small { display: block; }
+.live-state-banner strong { font-weight: 800; }
+.live-state-banner span, .live-state-banner small { margin-top: 2px; font-weight: 500; opacity: .9; }
+.live-state-banner small { font-size: 11.5px; opacity: .7; overflow-wrap: anywhere; }
+.live-state-banner button {
+  margin-top: 8px; min-height: 36px; padding: 0 14px; border-radius: 10px; border: 1px solid currentColor;
+  background: var(--surface); color: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.live-state-banner button:hover { background: #fff; }
 
 
 @media (prefers-reduced-motion: reduce) {

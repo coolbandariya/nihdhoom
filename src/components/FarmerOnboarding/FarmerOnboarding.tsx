@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import CodeSlots from './CodeSlots';
 import Stepper, { Step } from './Stepper';
 import { supabase } from '../../lib/supabase';
+import { describeAuthError } from '../../lib/liveStatus';
+import type { ActiveTab } from '../Header';
 import {
   UserCheck,
   Phone,
@@ -34,7 +36,29 @@ const STEPS: { id: KYCStep; label: string; sublabel: string; icon: React.FC<{ cl
 const STEP_ORDER: KYCStep[] = ['PHONE', 'OTP', 'CONSENT', 'AADHAAR', 'FACE_SCAN', 'BANK', 'LAND_RECORDS', 'DONE'];
 const DEMO_MODE = import.meta.env.VITE_NIRDHOOM_DEMO_MODE === 'true';
 
-export const FarmerOnboarding: React.FC = () => {
+// Live accounts only use steps that talk to real services: phone, OTP, consent,
+// then a real field. The identity, selfie and bank adapters stay demo-only.
+const LIVE_ORDER: KYCStep[] = ['PHONE', 'OTP', 'CONSENT', 'LAND_RECORDS', 'DONE'];
+const LIVE_LABELS: Partial<Record<KYCStep, { label: string; sublabel: string }>> = {
+  LAND_RECORDS: { label: 'Register your field', sublabel: 'Where the machine should go' },
+  DONE: { label: 'Account ready', sublabel: 'Book a pickup or open Telegram' },
+};
+const FLOW: KYCStep[] = DEMO_MODE ? STEP_ORDER : LIVE_ORDER;
+const VISIBLE_STEPS = FLOW.map((id) => {
+  const base = STEPS.find((step) => step.id === id) as (typeof STEPS)[number];
+  return DEMO_MODE ? base : { ...base, ...(LIVE_LABELS[id] || {}) };
+});
+const VARIETIES = ['PR-126', 'PR-131', 'Pusa-44', 'Basmati-1509', 'Basmati-1121'] as const;
+const DISTRICTS = ['Sangrur', 'Patiala', 'Ludhiana', 'Bathinda', 'Moga', 'Barnala', 'Fatehgarh Sahib', 'Ferozepur', 'Mansa', 'Muktsar', 'Faridkot', 'Jalandhar', 'Kapurthala', 'Amritsar', 'Tarn Taran', 'Gurdaspur', 'Hoshiarpur', 'Mohali', 'Rupnagar', 'Fazilka', 'Pathankot', 'Malerkotla', 'Nawanshahr'];
+
+type OwnedField = { id: string; khasra_no: string; village: string; acreage: number; status: string };
+
+type Props = {
+  onNavigate?: (tab: ActiveTab) => void;
+  onFieldsChanged?: () => void;
+};
+
+export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged }) => {
   const [currentStep, setCurrentStep] = useState<KYCStep>('PHONE');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
@@ -54,26 +78,137 @@ export const FarmerOnboarding: React.FC = () => {
   const [activeConsent, setActiveConsent] = useState(false);
   const [withdrawBusy, setWithdrawBusy] = useState(false);
   const [withdrawMessage, setWithdrawMessage] = useState('');
+  const [userId, setUserId] = useState<string | null>(null);
+  const [myFields, setMyFields] = useState<OwnedField[]>([]);
+  const [district, setDistrict] = useState('Sangrur');
+  const [variety, setVariety] = useState<string>('PR-126');
+  const [harvestDate, setHarvestDate] = useState('');
+  const [lat, setLat] = useState('');
+  const [lng, setLng] = useState('');
+  const [locating, setLocating] = useState(false);
+  const [fieldBusy, setFieldBusy] = useState(false);
+  const [fieldError, setFieldError] = useState('');
+  const [savedField, setSavedField] = useState<OwnedField | null>(null);
+
+  // Load everything we know about the signed-in farmer. Returns whether an
+  // active consent exists so callers can skip steps the farmer already did.
+  const loadAccount = async (uid: string): Promise<boolean> => {
+    if (!supabase) return false;
+    const client = supabase;
+    const [consentRes, profileRes, fieldsRes] = await Promise.all([
+      client.from('consents').select('id').eq('profile_id', uid).eq('consent_type', 'farmer_network').is('revoked_at', null).order('accepted_at', { ascending: false }).limit(1).maybeSingle(),
+      client.from('profiles').select('full_name,phone,village').eq('id', uid).maybeSingle(),
+      client.from('fields').select('id,khasra_no,village,acreage,status').eq('owner_id', uid).order('created_at', { ascending: false }),
+    ]);
+    const hasConsent = Boolean(consentRes.data);
+    setUserId(uid);
+    setActiveConsent(hasConsent);
+    setMyFields((fieldsRes.data as OwnedField[] | null) || []);
+    const profile = profileRes.data as { full_name?: string | null; phone?: string | null; village?: string | null } | null;
+    if (profile) {
+      setName((value) => value || profile.full_name || '');
+      setVillage((value) => value || profile.village || '');
+      setPhone((value) => value || String(profile.phone || '').replace(/^\+?91/, ''));
+    }
+    return hasConsent;
+  };
 
   useEffect(() => {
     if (DEMO_MODE || !supabase) return;
     const client = supabase;
     let cancelled = false;
     void client.auth.getUser().then(async ({ data }) => {
-      if (!data.user) return;
-      const { data: consent } = await client
-        .from('consents')
-        .select('id')
-        .eq('profile_id', data.user.id)
-        .eq('consent_type', 'farmer_network')
-        .is('revoked_at', null)
-        .order('accepted_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (!cancelled) setActiveConsent(Boolean(consent));
+      if (!data.user || cancelled) return;
+      const hasConsent = await loadAccount(data.user.id);
+      if (cancelled) return;
+      setCurrentStep((step) => (step === 'PHONE' ? (hasConsent ? 'LAND_RECORDS' : 'CONSENT') : step));
     });
     return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const signOut = async () => {
+    if (!supabase) return;
+    await supabase.auth.signOut();
+    setUserId(null);
+    setMyFields([]);
+    setActiveConsent(false);
+    reset();
+  };
+
+  const useMyLocation = () => {
+    setFieldError('');
+    if (!navigator.geolocation) {
+      setFieldError('This browser cannot share a location. Type the latitude and longitude instead.');
+      return;
+    }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLat(pos.coords.latitude.toFixed(6));
+        setLng(pos.coords.longitude.toFixed(6));
+        setLocating(false);
+      },
+      (err) => {
+        setLocating(false);
+        setFieldError(err.code === err.PERMISSION_DENIED
+          ? 'Location permission was blocked. Allow location for this site, or type the latitude and longitude.'
+          : 'Could not read your location. Try again outdoors, or type the latitude and longitude.');
+      },
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 },
+    );
+  };
+
+  const registerField = async () => {
+    setFieldError('');
+    const acres = Number(acreage);
+    const latitude = Number(lat);
+    const longitude = Number(lng);
+    if (!supabase) { setFieldError('Live database is not configured.'); return; }
+    if (!khasra.trim()) { setFieldError('Enter the Khasra or survey number from your land record.'); return; }
+    if (!village.trim()) { setFieldError('Enter the village.'); return; }
+    if (!Number.isFinite(acres) || acres <= 0 || acres > 500) { setFieldError('Enter the area in acres, between 0.01 and 500.'); return; }
+    if (!lat || !lng || !Number.isFinite(latitude) || !Number.isFinite(longitude) || latitude < 6 || latitude > 38 || longitude < 68 || longitude > 98) {
+      setFieldError('Add the field location with the button, or type a valid latitude and longitude.');
+      return;
+    }
+    setFieldBusy(true);
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData.user) {
+      setFieldBusy(false);
+      setFieldError('Your session expired. Please verify your phone again.');
+      return;
+    }
+    const { data, error } = await supabase
+      .from('fields')
+      .insert({
+        owner_id: userData.user.id,
+        khasra_no: khasra.trim(),
+        village: village.trim(),
+        block: block || null,
+        district,
+        crop: 'Paddy',
+        variety,
+        acreage: Math.round(acres * 100) / 100,
+        expected_harvest_date: harvestDate || null,
+        center_lat: latitude,
+        center_lng: longitude,
+        status: 'REGISTERED',
+      })
+      .select('id,khasra_no,village,acreage,status')
+      .single();
+    setFieldBusy(false);
+    if (error || !data) {
+      setFieldError(error?.message || 'The field could not be saved. Please try again.');
+      return;
+    }
+    const saved = data as OwnedField;
+    setSavedField(saved);
+    setMyFields((list) => [saved, ...list]);
+    setKhasra(''); setAcreage(''); setHarvestDate(''); setLat(''); setLng('');
+    onFieldsChanged?.();
+    setCurrentStep('DONE');
+  };
 
   const withdrawConsent = async () => {
     if (DEMO_MODE || !supabase || withdrawBusy) return;
@@ -119,13 +254,13 @@ export const FarmerOnboarding: React.FC = () => {
     return () => window.clearInterval(timer);
   }, [resendSeconds]);
 
-  const stepIndex = STEP_ORDER.indexOf(currentStep);
+  const stepIndex = FLOW.indexOf(currentStep);
 
   const advance = () => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      const next = STEP_ORDER[stepIndex + 1];
+      const next = FLOW[stepIndex + 1];
       if (next) setCurrentStep(next);
     }, 900);
   };
@@ -156,7 +291,7 @@ export const FarmerOnboarding: React.FC = () => {
     });
     setLoading(false);
     if (error) {
-      setOtpError(error.message || 'Unable to send OTP.');
+      setOtpError(describeAuthError(error.message, 'Unable to send OTP.'));
       setOtpStatus('error');
       return;
     }
@@ -192,7 +327,7 @@ export const FarmerOnboarding: React.FC = () => {
     });
     if (error || !data.user) {
       setLoading(false);
-      setOtpError(error?.message || 'OTP verification failed. Please try again.');
+      setOtpError(describeAuthError(error?.message, 'OTP verification failed. Please try again.'));
       setOtpStatus('error');
       return;
     }
@@ -209,13 +344,16 @@ export const FarmerOnboarding: React.FC = () => {
       return;
     }
     setOtpStatus('success');
-    window.setTimeout(() => setCurrentStep('CONSENT'), 650);
+    // Returning farmers already gave consent: take them straight to their fields.
+    const hasConsent = await loadAccount(data.user.id);
+    window.setTimeout(() => setCurrentStep(hasConsent ? 'LAND_RECORDS' : 'CONSENT'), 650);
   };
 
   const reset = () => {
     setCurrentStep('PHONE');
     setPhone(''); setOtp(''); setAadhaarLast4(''); setName(''); setVillage('');
     setBlock(''); setKhasra(''); setAcreage('');
+    setLat(''); setLng(''); setHarvestDate(''); setFieldError(''); setSavedField(null);
     setFaceScanned(false); setBankVerified(false); setOtpError(''); setOtpStatus('idle'); setConsentAccepted(false);
   };
 
@@ -261,8 +399,8 @@ export const FarmerOnboarding: React.FC = () => {
           <div className="farmer-onboarding-stepper tone-native ui-card lg:sticky lg:top-24">
             <div className="px-1 pb-3">
               <h4 className="ui-eyebrow">Onboarding progress</h4>
-              <p className="mt-2 font-[family-name:var(--font-display)] text-[22px] font-bold leading-tight text-[var(--ink)]">{STEPS[stepIndex]?.label}</p>
-              <p className="mt-1 text-[13px] text-[var(--muted)]">{STEPS[stepIndex]?.sublabel}</p>
+              <p className="mt-2 font-[family-name:var(--font-display)] text-[22px] font-bold leading-tight text-[var(--ink)]">{VISIBLE_STEPS[stepIndex]?.label}</p>
+              <p className="mt-1 text-[13px] text-[var(--muted)]">{VISIBLE_STEPS[stepIndex]?.sublabel}</p>
             </div>
             <Stepper
               key={stepIndex}
@@ -275,14 +413,14 @@ export const FarmerOnboarding: React.FC = () => {
               onStepChange={() => undefined}
               onFinalStepCompleted={() => undefined}
             >
-              {STEPS.map((step) => (
+              {VISIBLE_STEPS.map((step) => (
                 <Step key={step.id}>
                   <span className="sr-only">{step.label}: {step.sublabel}</span>
                 </Step>
               ))}
             </Stepper>
             <ol className="kyc-steps" aria-hidden="true">
-              {STEPS.map((step, index) => {
+              {VISIBLE_STEPS.map((step, index) => {
                 const StepIcon = step.icon;
                 const state = index < stepIndex ? 'is-done' : index === stepIndex ? 'is-current' : '';
                 return (
@@ -504,7 +642,8 @@ export const FarmerOnboarding: React.FC = () => {
                       setOtpError(profileError.message || 'Consent was recorded but profile status could not be updated.');
                       return;
                     }
-                    setCurrentStep('AADHAAR');
+                    setActiveConsent(true);
+                    setCurrentStep(DEMO_MODE ? 'AADHAAR' : 'LAND_RECORDS');
                   }}
                   disabled={!consentAccepted || loading}
                   className="ui-btn is-primary is-lg is-block mt-auto"
@@ -516,7 +655,7 @@ export const FarmerOnboarding: React.FC = () => {
               </>
             )}
 
-            {currentStep === 'AADHAAR' && (
+            {DEMO_MODE && currentStep === 'AADHAAR' && (
               <>
                 <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
                   <Fingerprint className="w-4 h-4 text-emerald-400" />
@@ -553,7 +692,7 @@ export const FarmerOnboarding: React.FC = () => {
               </>
             )}
 
-            {currentStep === 'FACE_SCAN' && (
+            {DEMO_MODE && currentStep === 'FACE_SCAN' && (
               <>
                 <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
                   <Camera className="w-4 h-4 text-cyan-400" />
@@ -613,7 +752,7 @@ export const FarmerOnboarding: React.FC = () => {
               </>
             )}
 
-            {currentStep === 'BANK' && (
+            {DEMO_MODE && currentStep === 'BANK' && (
               <>
                 <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
                   <Landmark className="w-4 h-4 text-amber-400" />
@@ -648,7 +787,114 @@ export const FarmerOnboarding: React.FC = () => {
               </>
             )}
 
-            {currentStep === 'LAND_RECORDS' && (
+            {!DEMO_MODE && currentStep === 'LAND_RECORDS' && (
+              <>
+                <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+                  <Wheat className="w-4 h-4 text-emerald-400" />
+                  <h4 className="font-bold text-sm text-white">Step 4: Register your field</h4>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Enter the field as it appears in your land record, and capture its location while you stand at the field. It is saved as farmer-declared until a verifier checks the boundary.
+                </p>
+
+                {myFields.length > 0 && (
+                  <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-3 text-xs text-slate-400">
+                    <strong className="block text-[11px] font-black uppercase tracking-wide text-slate-300">Your registered fields ({myFields.length})</strong>
+                    <ul className="mt-2 space-y-1">
+                      {myFields.slice(0, 5).map((f) => (
+                        <li key={f.id} className="flex items-center justify-between gap-3">
+                          <span className="truncate">{f.khasra_no} · {f.village} · {Number(f.acreage).toFixed(2)} ac</span>
+                          <span className="shrink-0 font-mono text-[10px] text-slate-500">{f.status.replace(/_/g, ' ')}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <button type="button" className="ui-btn is-primary" onClick={() => onNavigate?.('FARMER_ONBOARDING')}>Book a pickup</button>
+                      <button type="button" className="ui-btn" onClick={() => onNavigate?.('FARMER_SURFACE')}>Connect Telegram</button>
+                    </div>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className="text-xs text-slate-400 block mb-1" htmlFor="live-khasra">Khasra / Survey number</label>
+                    <input id="live-khasra" className="ui-input font-mono" placeholder="412/1-2" value={khasra} onChange={(e) => setKhasra(e.target.value)} />
+                  </div>
+                  <div>
+                    <label className="text-xs text-slate-400 block mb-1" htmlFor="live-acres">Area (acres)</label>
+                    <input id="live-acres" type="number" inputMode="decimal" min={0.01} max={500} step={0.01} className="ui-input font-mono" placeholder="3.5" value={acreage} onChange={(e) => setAcreage(e.target.value)} />
+                  </div>
+                  <div>
+                    <label className="text-xs text-slate-400 block mb-1" htmlFor="live-village">Village</label>
+                    <input id="live-village" className="ui-input" value={village} onChange={(e) => setVillage(e.target.value)} />
+                  </div>
+                  <div>
+                    <label className="text-xs text-slate-400 block mb-1" htmlFor="live-district">District</label>
+                    <select id="live-district" className="ui-select" value={district} onChange={(e) => setDistrict(e.target.value)}>
+                      {DISTRICTS.map((d) => <option key={d}>{d}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs text-slate-400 block mb-1" htmlFor="live-variety">Paddy variety</label>
+                    <select id="live-variety" className="ui-select" value={variety} onChange={(e) => setVariety(e.target.value)}>
+                      {VARIETIES.map((v) => <option key={v}>{v}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs text-slate-400 block mb-1" htmlFor="live-harvest">Expected harvest date (optional)</label>
+                    <input id="live-harvest" type="date" className="ui-input" value={harvestDate} onChange={(e) => setHarvestDate(e.target.value)} />
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-xs font-bold text-slate-300"><MapPin className="mr-1 inline h-3.5 w-3.5 text-emerald-400" />Field location</span>
+                    <button type="button" className="ui-btn" onClick={useMyLocation} disabled={locating}>
+                      {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <MapPin className="h-4 w-4" />}
+                      {locating ? 'Finding location…' : 'Use my current location'}
+                    </button>
+                  </div>
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    <input aria-label="Latitude" inputMode="decimal" className="ui-input font-mono" placeholder="Latitude" value={lat} onChange={(e) => setLat(e.target.value)} />
+                    <input aria-label="Longitude" inputMode="decimal" className="ui-input font-mono" placeholder="Longitude" value={lng} onChange={(e) => setLng(e.target.value)} />
+                  </div>
+                  <p className="mt-2 text-[11px] text-slate-500">Stand inside or at the edge of the field. The location cannot be edited later, so it should match the field.</p>
+                </div>
+
+                {fieldError && <div className="text-xs text-red-300 bg-red-950/30 border border-red-500/30 rounded-lg p-2" role="alert">{fieldError}</div>}
+
+                <button
+                  type="button"
+                  onClick={() => void registerField()}
+                  disabled={fieldBusy || !khasra || !acreage || !lat || !lng}
+                  className="ui-btn is-primary is-lg is-block mt-auto"
+                >
+                  {fieldBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : <MapPin className="w-4 h-4" />}
+                  {fieldBusy ? 'Saving field…' : 'Save my field'}
+                </button>
+              </>
+            )}
+
+            {!DEMO_MODE && currentStep === 'DONE' && (
+              <div className="flex-1 flex flex-col items-center justify-center gap-4 py-4 text-center">
+                <div className="grid h-16 w-16 place-items-center rounded-full bg-emerald-500/15 text-emerald-500">
+                  <CheckCircle2 className="h-9 w-9" />
+                </div>
+                <div>
+                  <div className="text-2xl font-black text-emerald-400 font-['Outfit']">Your NIRDHOOM account is ready</div>
+                  <p className="mx-auto mt-2 max-w-sm text-xs leading-relaxed text-slate-400">
+                    {name || 'Your'} account is linked to +91 {phone}.{savedField ? ` Field ${savedField.khasra_no} (${Number(savedField.acreage).toFixed(2)} acres, ${savedField.village}) is registered and waiting for a verifier to check its boundary.` : ''}
+                  </p>
+                </div>
+                <div className="flex w-full max-w-sm flex-col gap-2">
+                  <button type="button" className="ui-btn is-primary is-lg is-block" onClick={() => onNavigate?.('FARMER_ONBOARDING')}>Book a pickup</button>
+                  <button type="button" className="ui-btn is-lg is-block" onClick={() => onNavigate?.('FARMER_SURFACE')}>Connect Telegram</button>
+                  <button type="button" className="ui-btn is-block" onClick={() => setCurrentStep('LAND_RECORDS')}>Add another field</button>
+                </div>
+              </div>
+            )}
+
+            {DEMO_MODE && currentStep === 'LAND_RECORDS' && (
               <>
                 <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
                   <Wheat className="w-4 h-4 text-emerald-400" />
@@ -694,7 +940,7 @@ export const FarmerOnboarding: React.FC = () => {
               </>
             )}
 
-            {currentStep === 'DONE' && (
+            {DEMO_MODE && currentStep === 'DONE' && (
               <div className="flex-1 flex flex-col items-center justify-center gap-4 py-4">
                 <div className="relative">
                   <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-emerald-400 shadow-xl shadow-emerald-500/20">
@@ -739,6 +985,12 @@ export const FarmerOnboarding: React.FC = () => {
               </div>
             )}
           </div>
+          {!DEMO_MODE && userId && (
+            <p className="mt-3 text-center text-xs text-slate-500">
+              Signed in{phone ? ` as +91 ${phone}` : ''}.{' '}
+              <button type="button" className="font-bold underline" onClick={() => void signOut()}>Sign out</button>
+            </p>
+          )}
         </div>
       </div>
     </div>

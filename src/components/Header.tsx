@@ -170,7 +170,7 @@ export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
           </nav>
 
           <div className="ml-auto flex shrink-0 items-center gap-2">
-            <div className="header-status hidden xl:inline-flex">
+            <div className="header-status hidden 2xl:inline-flex">
               <span className={`header-status-dot ${demoMode ? 'is-sample' : ''}`} />
               <span>{demoMode ? 'Sample records' : 'Connected records'}</span>
             </div>
